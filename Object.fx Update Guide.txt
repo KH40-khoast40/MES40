@@ -1,0 +1,14 @@
+
+// Ver 1 -> Ver 1.01 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(Nothing really changed, you can use the fx from ver 1 with this version of the shader no problem). 
+To make sure it has full things written about the new feature for future understanding, add the NEW LINE to your fx from ver 1:
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	#define Sub_Map_Type ...
+	...
+	//2: Light Map (Take bright parts to blend with the diffuse texture)
+	//3: Shadow and Light Map (Take both dark and bright parts to blend with the diffuse texture) <- NEW LINE
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	Also change "(Required)" in the #define NormalMapTexture and #define SpecularMapTexture lines to "(Optional, delete the double slash at the beginning of the line to enable it)" and add double slash to those lines if you don't use those maps
