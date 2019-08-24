@@ -29,7 +29,6 @@ For in-depth customization, I've written comments explaining things in the Objec
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
 - SimpleSoftShadow : [ビームマンP](https://w.atwiki.jp/beamman)
 - ExcellentShadow : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
-
 - Mixing shaders : [KH40](https://www.deviantart.com/khoast40)
 - Special thanks : [FlyingSpirits-P](https://www.deviantart.com/flyingspirits-p), [Minmode](https://www.deviantart.com/minmode)
   
