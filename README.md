@@ -15,10 +15,11 @@ MMD Extended Shader with things that MMD doesn't support natively
   
   ## Credits
   - Original base shader : 舞力介入P
-  - Normal map support: LessThanEqual (AlternativeFull)
+  - Normal map support: [LessThanEqual](https://twitter.com/lessthanequal?lang=en) (AlternativeFull)
   - Animated texture support : ??? (from MME sample pack)
   - Cube map support : AMD (from MME sample pack)
-  - Soft shadow: ビームマンP
-  - ExcellentShadow: そぼろ
-  - Mixing shaders, specular map, vertex color, sub map and alpha test support : KH40
+  - SimpleSoftShadow: [ビームマンP](https://w.atwiki.jp/beamman)
+  - ExcellentShadow: [そぼろ](https://www.nicovideo.jp/mylist/17392230)
+  - Mixing shaders, specular map, vertex color, sub map and alpha test support : [KH40](https://www.deviantart.com/khoast40)
+  - Special thanks: [FlyingSpirits-P](https://www.deviantart.com/flyingspirits-p), [Minmode](https://www.deviantart.com/minmode)
   
