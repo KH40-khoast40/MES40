@@ -6,9 +6,9 @@ MMD Extended Shader with things that MMD doesn't support natively
   - Normal Map
   - Specular Map
   - Cube Map
-  - Alpha Testing
   - Vertex Color
   - Sub Map ( Shadow or Light Map )
+  - Alpha Test
   - Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
   - Customizable Toon, Spa, Cube Map, Specular Light values
   - All the existed features that are available in MMD default shader
