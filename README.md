@@ -1,5 +1,5 @@
 # MES40
-MMD Extended Shader with things that MMD doesn't support natively
+MMD Extended Shader with things that MMD doesn't support natively, "a bit" project-diva-dedicated
 
 ## Supports
 - Animated Texture ( APNG / gif )
