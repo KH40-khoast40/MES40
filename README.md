@@ -2,6 +2,7 @@
 MMD Extended Shader with things that MMD doesn't support natively, "a bit" project-diva-dedicated
 
 ## Supports
+- All the existed features that are available in MMD default shader
 - Animated Texture ( APNG / gif )
 - Normal Map
 - Specular Map
@@ -11,7 +12,6 @@ MMD Extended Shader with things that MMD doesn't support natively, "a bit" proje
 - Alpha Test
 - Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
-- All the existed features that are available in MMD default shader
 
 ## Usage
 Apply Object.fx to the materials. (clone the fx file if you want to use the shader on 2 or more materials with different settings)
