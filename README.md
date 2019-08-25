@@ -7,6 +7,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Normal Map
 - Specular Map
 - Cube Map
+- Premade Tangents (v1.1)
 - Vertex Color
 - Sub Map ( Shadow or Light Map )
 - Alpha Test
@@ -24,6 +25,7 @@ For in-depth customization, I've written comments explaining things in the Objec
 - Normal map support : [LessThanEqual](https://twitter.com/lessthanequal?lang=en) (AlternativeFull)
 - Specular map support : [KH40](https://www.deviantart.com/khoast40)
 - Cube map support : AMD (from MME sample pack)
+- Premade tangents support : [KH40](https://www.deviantart.com/khoast40), Internet references
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
