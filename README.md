@@ -4,13 +4,13 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 ## Features
 - All the existed features that are available in MMD default shader
 - Animated Texture ( APNG / gif )
-- Normal Map ![](https://i.imgur.com/5ia4FJx.png)
+- Normal Map <img src="https://i.imgur.com/5ia4FJx.png" alt="alt text" width="256" height="72">
 - Specular Map 
-- Cube Map ![](https://i.imgur.com/imSbAFd.png)
-- Premade Tangents (v1.1)
-- Vertex Color ![](https://i.imgur.com/cTQ7Lxb.png)
-- Sub Map ( Shadow or Light Map ) ![](https://i.imgur.com/5L3jbHb.png)
-- Alpha Test ![](https://i.imgur.com/9hVYS8B.png)
+- Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72">
+- Premade Tangents **(v1.1)**
+- Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
+- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
+- Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
 
