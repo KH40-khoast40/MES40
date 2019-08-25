@@ -11,7 +11,7 @@
 
 //#define NormalMapTexture  "noneN.png" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
 
-	#define Toon_Use_NormalMap 1 //(Example for the others below) If this is disabled, the toon will ignore the normal map
+	#define Toon_Use_NormalMap 1
 	#define Spa_CubeMap_Use_NormalMap 1
 	#define SpecularLight_Use_NormalMap 1
 	
@@ -35,6 +35,16 @@
 
 #define SpecularLight_Intensity 1
 #define SpecularLight_Focus 50 //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define TANGENT 0 //Enable or disable tangent, the model's normals will be messed up if it don't have pre-made tangent (or if you choose the wrong AddUV )
+
+#define Tangent_Stored_At TEXCOORD3 //Don't leave this empty, even if you disable tangent
+//AddUV1 = TEXCOORD1
+//AddUV2 = TEXCOORD2
+//AddUV3 = TEXCOORD3
+//AddUV4 = TEXCOORD4
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -510,18 +510,18 @@ sampler DefSampler : register(s0);
 struct BufferShadow_OUTPUT {
     float4 Pos      : POSITION;     // 射影変換座標
     float4 ZCalcTex : TEXCOORD0;    // Z値
-    float2 Tex      : TEXCOORD1;    // テクスチャ
+    float4 TexUVs   : TEXCOORD1;    // テクスチャ
     float3 Normal   : TEXCOORD2;    // 法線
     float3 Eye      : TEXCOORD3;    // カメラとの相対位置
     float2 SpTex    : TEXCOORD4;	 // スフィアマップテクスチャ座標
 	float3 ViewVec  : TEXCOORD5;
 	float4 VColor	: TEXCOORD6;
-	float2 SubMapUV : TEXCOORD7;
+	float4 Tangent  : TEXCOORD7;
     float4 Color    : COLOR0;       // ディフューズ色
 };
 
 // 頂点シェーダ
-BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At ,uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon)
+BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At , float4 Tangent : Tangent_Stored_At , uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon)
 {
     BufferShadow_OUTPUT Out = (BufferShadow_OUTPUT)0;
 
@@ -539,7 +539,9 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 	
 	Out.VColor = VColor;
 	
-	Out.SubMapUV = SubMapUV;
+	Out.Tangent = Tangent;
+	
+	Out.TexUVs = float4(Tex,SubMapUV);
     
     // ディフューズ色＋アンビエント色 計算
     Out.Color.rgb = AmbientColor;
@@ -548,9 +550,6 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
     }
     Out.Color.a = DiffuseColor.a;
     Out.Color = saturate( Out.Color );
-    
-    // テクスチャ座標
-    Out.Tex = Tex;
     
     if ( useSphereMap ) {
 		if ( use_subtexture ) {
@@ -566,32 +565,51 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 // ピクセルシェーダ
 float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 ViewVec: TEXCOORD0, uniform bool useSphereMap, uniform bool useToon) : COLOR
 {
+	float2 Tex = IN.TexUVs.xy;
+	float2 SubMapUV = IN.TexUVs.zw;
+	
 	float4 VertexColor = float4(IN.VColor.r,IN.VColor.g,IN.VColor.b,IN.VColor.a);
 	
 	#ifdef SubMapTexture
-	float3 SubMap = tex2D(SubMapSamp,IN.SubMapUV);
+	float3 SubMap = tex2D(SubMapSamp,SubMapUV);
 	#endif
+	
+	float3 Binormal = -(cross(IN.Normal.xyz, IN.Tangent.xyz) * IN.Tangent.w);
+	float3x3 TBN = transpose( float3x3(normalize(IN.Tangent.xyz), normalize(Binormal), normalize(IN.Normal)) );
 	
 	//////////////////////Normal Map related values//////////////////////////////////////
 	#ifdef NormalMapTexture
-	float4 NormalColor = tex2D( NormalMapSamp, IN.Tex) * 2;
-	
-	float3 NormalDirection = normalize(IN.Normal);
-	float3 V = normalize(IN.Eye);
-	
-	NormalColor = NormalColor.rgba;
-	NormalColor.a = 1;
-	float3x3 tangentFrame = compute_tangent_frame(NormalDirection, V, IN.Tex);
-	NormalDirection = normalize(mul(NormalColor - 1.0f, tangentFrame));
-	
+		
+		float4 NormalColor = tex2D( NormalMapSamp, Tex) * 2;
+		
+		#if TANGENT == 0
+			float3 NormalDirection = normalize(IN.Normal);
+			float3 V = normalize(IN.Eye);
+			
+			NormalColor = NormalColor.rgba;
+			NormalColor.a = 1;
+			float3x3 tangentFrame = compute_tangent_frame(NormalDirection, V, Tex);
+			NormalDirection = normalize(mul(NormalColor - 1.0f, tangentFrame));
+		
+		#else
+			float3 NormalDirection = normalize(mul( NormalColor - 1.0f, TBN ));
+		#endif
+		
 	#else
-	float3 NormalDirection = normalize(IN.Normal);
+		
+		#if TANGENT == 0
+			float3 NormalDirection = normalize(IN.Normal);
+		
+		#else
+			float3 NormalDirection = normalize(mul( float3(0,0,1), TBN ));
+		#endif
+		
 	#endif
 	/////////////////////////////////////////////////////////////////////////////////////
 	
 	//////////////////////Specular Map related values//////////////////////////////////////
 	#ifdef SpecularMapTexture
-	float4 SpecularLevel = tex2D(SpecularMapSamp, IN.Tex);
+	float4 SpecularLevel = tex2D(SpecularMapSamp, Tex);
 	
 	#else
 	float4 SpecularLevel = float4(1,1,1,1);
@@ -612,7 +630,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 V
     float4 ShadowColor = float4(saturate(AmbientColor), Color.a);  // 影の色
     if ( useTexture ) {
         // テクスチャ適用
-        float4 TexColor = tex2D( ObjTexSampler, IN.Tex );
+        float4 TexColor = tex2D( ObjTexSampler, Tex );
         // テクスチャ材質モーフ数
 	    TexColor.rgb = lerp(1, TexColor * TextureMulValue + TextureAddValue, TextureMulValue.a + TextureAddValue.a);
         Color *= TexColor;
