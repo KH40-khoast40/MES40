@@ -19,6 +19,15 @@ Apply Object.fx to the materials. (clone the fx file if you want to use the shad
 
 For in-depth customization, I've written comments explaining things in the Object.fx, you should be able to understand after reading it.
 
+If you want to update your existing Object.fx to the newer version, read *Object.fx Update Guide.txt*
+
+## Notices
+
+- If you export a cube map from MikuMikuModel, you have to open it Noesis, and then export it out again (under .dds format), I don't why, but the cube map ripped straight out of MikuMikuModel cause error for the shader
+
+- I *accidentally* commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments, sorry about that lol
+
+
 ## Credits
 - Original base shader : [舞力介入P](https://www.nicovideo.jp/user/282266)
 - Animated texture support : ??? (from MME sample pack)
