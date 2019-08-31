@@ -35,6 +35,7 @@
 
 #define SpecularLight_Intensity 1
 #define SpecularLight_Focus 50 //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
+#define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

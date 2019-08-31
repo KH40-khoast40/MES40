@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.1
+//  MMD Extended Shader (MES40) ver 1.11
 //
 //  For credits, go to https://github.com/KH40-khoast40/MES40
 //
@@ -80,6 +80,10 @@ bool	 spadd;    // スフィアマップ加算合成フラグ
 //////////////////////////////////////////
 #ifndef SpecularLight_Focus
 	#define SpecularLight_Focus SpecularPower
+#endif
+//////////////////////////////////////////
+#ifndef SpecularLight_Affected_By_LightDirection
+	#define SpecularLight_Affected_By_LightDirection 1
 #endif
 //////////////////////////////////////////
 
@@ -614,7 +618,12 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 V
 	/////////////////////////////////////////////////////////////////////////////////////
 
     // スペキュラ色計算
+	#if SpecularLight_Affected_By_LightDirection == 1
     float3 HalfVector = normalize( normalize(IN.Eye) + -LightDirection );
+	
+	#else
+	float3 HalfVector = normalize( normalize(IN.Eye));
+	#endif
 	
 	#if SpecularLight_Use_NormalMap == 1
     float3 Specular = pow( max(0,dot( HalfVector, NormalDirection )), SpecularLight_Focus ) * SpecularColor;
@@ -727,9 +736,11 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 V
 	
 	#if SpecularLight_Use_SpecularMap == 1
     Color.rgb += Specular * SpecularLevel * SpecularLight_Intensity;
+	ShadowColor.rgb += Specular * SpecularLevel * SpecularLight_Intensity;
 	
 	#else
     Color.rgb += Specular * SpecularLight_Intensity;
+	ShadowColor.rgb += Specular * SpecularLight_Intensity;
 	#endif
 	
 	#if VERTEXCOLOR == 1
