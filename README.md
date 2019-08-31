@@ -3,7 +3,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 
 ## Features
 - All the existed features that are available in MMD default shader
-- Animated Texture ( APNG / gif ) : You get the idea (the movie.fx can't run on some people's computer *including me*, but this thing can, for me, and for the people has experienced a shader that has the same implementation as this shader)
+- Animated Texture ( APNG / gif ) : You get the idea (the movie.fx can't run on some people's computer *including mine*, but this thing can, for me, and for the people has experienced a shader that has the same implementation as this shader)
 - Normal Map <img src="https://i.imgur.com/5ia4FJx.png" alt="alt text" width="256" height="72">
 - Specular Map 
 - Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72"> Aka the better sister of spa [(seriously tho can the spa make the floor looks this pretty!?!?](https://www.youtube.com/watch?v=BJLyWGan2hs), and this is what PD uses for baked reflections so you can rip cube maps from the game and use it in MMD
