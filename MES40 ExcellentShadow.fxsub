@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.11
+//  MMD Extended Shader (MES40) ver 1.2
 //
 //  For credits, go to https://github.com/KH40-khoast40/MES40
 //
@@ -269,6 +269,23 @@ texture2D SubMap <
 >;
 sampler2D SubMapSamp = sampler_state {
 	texture = <SubMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef ThicknessMapTexture
+//Thickness Map
+texture2D ThicknessMap <
+	string ResourceName = ThicknessMapTexture;
+	int MipLevels = 0;
+>;
+sampler2D ThicknessMapSamp = sampler_state {
+	texture = <ThicknessMap>;
 	MINFILTER = ANISOTROPIC;
 	MAGFILTER = ANISOTROPIC;
 	MIPFILTER = ANISOTROPIC;
@@ -864,6 +881,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
         TransScreenTex.y = (1.0f - IN.ScreenTex.y) * 0.5f;
         TransScreenTex += ES_ViewportOffset;
         float SadowMapVal = tex2D(ScreenShadowMapProcessedSamp, TransScreenTex).r;
+		float SadowMapValSSS = tex2D(ScreenShadowMapProcessedSamp, TransScreenTex).r;
         
         float SSAOMapVal = 0;
         
@@ -886,8 +904,16 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
 			#if Toon_Use_NormalMap == 1
             SadowMapVal = min(saturate(dot(NormalDirection, -lightdir) * Toon_Gradient), SadowMapVal);
 			
+				#if SUBSURFACETOON == 1
+				SadowMapValSSS = min(saturate(dot(NormalDirection,-lightdir)*Subsurface_Toon_Gradient),SadowMapValSSS);
+				#endif
+			
 			#else
             SadowMapVal = min(saturate(dot(IN.Normal, -lightdir) * Toon_Gradient), SadowMapVal);
+			
+				#if SUBSURFACETOON == 1
+				SadowMapValSSS = min(saturate(dot(IN.Normal,-lightdir)*Subsurface_Toon_Gradient),SadowMapValSSS);
+				#endif
 			#endif
 			
 			#endif
@@ -897,6 +923,45 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
         }else{
             ShadowColor.rgb *= (1 - (1 - ShadowRate) * X_SHADOWPOWER);
         }
+		
+		#if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+		float4 Thickness = tex2D( ThicknessMapSamp , Tex );
+		#endif
+		
+		float rimSSS = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Subsurface_Rim_Glow_Gradient);
+		SadowMapValSSS -= rimSSS * Subsurface_Rim_Glow_Intensity;
+		
+		#ifdef Subsurface_Rim_Glow_Shadow_Area_Intensity
+		SadowMapVal += rimSSS * Subsurface_Rim_Glow_Shadow_Area_Intensity * Subsurface_Rim_Glow_Intensity;
+		#endif
+		
+		#ifndef Subsurface_Rim_Glow_Shadow_Area_Intensity
+		SadowMapVal += rimSSS * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Subsurface_Rim_Glow_Intensity;
+		#endif
+		    
+		Color.rgb = lerp(Color.rgb, ( Color.rgb * Subsurface_Toon_Color * (Subsurface_Toon_Color+1) ) ,(1-SadowMapValSSS)* Subsurface_Toon_Intensity);
+		
+		#endif
+		
+		#if Rim_Use_NormalMap == 1
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), NormalDirection)* Rim_Gradient);
+		#else
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Rim_Gradient);
+		#endif
+		
+		#if Rim_Use_SpecularMap == 1
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * SpecularLevel * Rim_Intensity ;
+		#else
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Intensity ;
+		#endif
+		
+		#ifdef Rim_Shadow_Area_Intensity
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
+		#else
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
+		#endif
         
         //影部分のSSAO合成
         float4 ShadowColor2 = ShadowColor;
@@ -907,7 +972,21 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
         Color = lerp(Color, ShadowColor, saturate(SSAOMapVal * 0.4));
         
         //最終合成
+
+
+		#if SUBSURFACETOON == 1
+
+		#ifdef ThicknessMapTexture
+		Color = lerp(Color, ShadowColor2, (1-SadowMapVal)*Thickness*Toon_Intensity);
+		#else
         Color = lerp(Color, ShadowColor2, (1-SadowMapVal)*Toon_Intensity);
+		#endif
+		
+		#else
+		
+		Color = lerp(Color, ShadowColor2, (1-SadowMapVal)*Toon_Intensity);
+		
+		#endif
         
 		#if ALPHATEST == 1
 		
@@ -951,6 +1030,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
         return Color;
     } else {
         float comp;
+		float compSSS;
         if(parthf) {
             // セルフシャドウ mode2
             comp=1-saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
@@ -958,6 +1038,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
             // セルフシャドウ mode1
             comp=1-saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord).r , 0.0f)*SKII1-0.3f);
         }
+		compSSS = comp;
+		
         if ( useToon ) {
             // トゥーン適用
             #if TOONSHADING == 1
@@ -965,15 +1047,77 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
 			#if Toon_Use_NormalMap == 1
             comp = min(saturate(dot(NormalDirection,-LightDirection)*Toon_Gradient),comp);
 			
+				#if SUBSURFACETOON == 1
+				compSSS = min(saturate(dot(NormalDirection,-LightDirection)*Subsurface_Toon_Gradient),compSSS);
+				#endif
+			
 			#else
             comp = min(saturate(dot(IN.Normal,-LightDirection)*Toon_Gradient),comp);
+			
+				#if SUBSURFACETOON == 1
+				compSSS = min(saturate(dot(IN.Normal,-LightDirection)*Subsurface_Toon_Gradient),compSSS);
+				#endif
 			#endif
 			
 			#endif
             ShadowColor.rgb *= MaterialToon * Toon_Brightness;
         }
+		
+		#if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+		float4 Thickness = tex2D( ThicknessMapSamp , Tex );
+		#endif
+		
+		float rimSSS = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Subsurface_Rim_Glow_Gradient);
+		compSSS -= rimSSS * Subsurface_Rim_Glow_Intensity;
+		
+		#ifdef Subsurface_Rim_Glow_Shadow_Area_Intensity
+		comp += rimSSS * Subsurface_Rim_Glow_Shadow_Area_Intensity * Subsurface_Rim_Glow_Intensity;
+		#endif
+		
+		#ifndef Subsurface_Rim_Glow_Shadow_Area_Intensity
+		comp += rimSSS * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Subsurface_Rim_Glow_Intensity;
+		#endif
         
-        float4 ans = lerp(Color, ShadowColor, (1-comp)*Toon_Intensity);
+		Color.rgb = lerp(Color.rgb, ( Color.rgb * Subsurface_Toon_Color * (Subsurface_Toon_Color+1) ) ,(1-compSSS)* Subsurface_Toon_Intensity);
+		
+		#endif
+		
+		
+		#if Rim_Use_NormalMap == 1
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), NormalDirection)* Rim_Gradient);
+		#else
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Rim_Gradient);
+		#endif
+		
+		#if Rim_Use_SpecularMap == 1
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * SpecularLevel * Rim_Intensity ;
+		#else
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Intensity ;
+		#endif
+		
+		#ifdef Rim_Shadow_Area_Intensity
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
+		#else
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
+		#endif
+		
+        
+        #if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+        float4 ans = lerp(Color, ShadowColor, (1-comp)*Thickness*Toon_Intensity);
+		#else
+		float4 ans = lerp(Color, ShadowColor, (1-comp)*Toon_Intensity);
+		#endif
+		
+		#else
+		
+		float4 ans = lerp(Color, ShadowColor, (1-comp)*Toon_Intensity);
+		
+		#endif
+		
 		
 		#if ALPHATEST == 1
 		

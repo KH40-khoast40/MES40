@@ -3,15 +3,13 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 
 ## Features
 - All the existed features that are available in MMD default shader
-- Animated Texture ( APNG / gif ) : You get the idea (the movie.fx can't run on some people's computer *including mine*, but this thing can, for me, and for the people has experienced a shader that has the same implementation as this shader)
+- Animated Texture ( APNG / gif )
 - Normal Map <img src="https://i.imgur.com/5ia4FJx.png" alt="alt text" width="256" height="72">
 - Specular Map 
-- Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72"> Aka the better sister of spa [(seriously tho can the spa make the floor looks this pretty!?!?](https://www.youtube.com/watch?v=BJLyWGan2hs), and this is what PD uses for baked reflections so you can rip cube maps from the game and use it in MMD
-
+- Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72">
 - Premade Tangents **(v1.1)** <img src="https://i.imgur.com/bz9MQ1j.png" alt="alt text" width="256" height="72">
-- Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72"> Make the ripped stage looks not as plain as before, and it can [make the models from the PSP series more *dimensional* and more *in-game*](https://sta.sh/0dm0ptiginc) , also thanks Minmode for making noesis pmx exporting script that support vertex color, if he didn't, I wouldn't have an idea of how to access it in MMD in the first place
-
-- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72"> This is the latest minute decision, after I figured out how to deal with vertex color (because the two has similar implementation), I know you can set sub map in PMXE via Sub-Tex but that means you can't use spa on that material, so I make this just in case
+- Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
+- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values

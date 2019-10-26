@@ -24,9 +24,9 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//See custom.png for details, leave these things alone if you want to keep the same setting as MMD's default shader
+//See custom_basic.png for details, leave these things alone if you want to keep the same setting as MMD's default shader
 
-#define Toon_Intensity 1
+#define Toon_Intensity 1 //Set this value larger than 1 with subsurface toon on will break the subsurface toon's color
 #define Toon_Brightness 1
 #define Toon_Gradient 3 //MMD default is 3
 
@@ -37,47 +37,80 @@
 #define SpecularLight_Focus 50 //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
 #define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//See custom_rim.png for details
+
+float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
+
+	#define Rim_Intensity 0 //Set it 0 to disable rim lighting completely
+	#define Rim_Gradient 3
+		
+	//#define Rim_Shadow_Area_Intensity 0.5 //Add double slash at the beginning of the line to auto-caculate the value
+		
+	#define Rim_Use_NormalMap 1 //Apply for the subsurface rim glow too, since they are basically the same thing
+	#define Rim_Use_SpecularMap 1
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//See custom_subsurface.png for details
+
+#define SUBSURFACETOON 0 //Enable or disable subsurface toon, can be use as fake subsurface scattering, might take a while to get a decent result
+
+	float3 Subsurface_Toon_Color = float3(1,0,0); //RGB value, scale: 0-1
+	
+	//#define ThicknessMapTexture "thickness.png" //Thickness Map (Optional, delete the double slash at the beginning of the line to enable it), it should be the AO map generated from Metaseq, Blender,...
+
+	#define Subsurface_Toon_Intensity 0.5
+	#define Subsurface_Toon_Gradient 2.5 //Should be around 85% - 125% of the Toon_Gradient's value, but feel free to try any number
+	
+	#define Subsurface_Rim_Glow_Intensity 0.25
+	#define Subsurface_Rim_Glow_Gradient 0.75
+	
+	//#define Subsurface_Rim_Glow_Shadow_Area_Intensity 0.5 //Add double slash at the beginning of the line to auto-caculate the value
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define TANGENT 0 //Enable or disable tangent, the model's normals will be messed up if it don't have pre-made tangent (or if you choose the wrong AddUV )
 
-#define Tangent_Stored_At TEXCOORD3 //Don't leave this empty, even if you disable tangent
-//AddUV1 = TEXCOORD1
-//AddUV2 = TEXCOORD2
-//AddUV3 = TEXCOORD3
-//AddUV4 = TEXCOORD4
+	#define Tangent_Stored_At TEXCOORD3 //Don't leave this empty, even if you disable tangent
+	//AddUV1 = TEXCOORD1
+	//AddUV2 = TEXCOORD2
+	//AddUV3 = TEXCOORD3
+	//AddUV4 = TEXCOORD4
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VERTEXCOLOR 0 //Enable or disable vertex color, model will turn black (or has messed up color) if it don't have vertex color (or if you choose the wrong AddUV )
 
-#define Vertex_Color_Stored_At TEXCOORD2 //Don't leave this empty, even if you disable vertex color
-//AddUV1 = TEXCOORD1
-//AddUV2 = TEXCOORD2
-//AddUV3 = TEXCOORD3
-//AddUV4 = TEXCOORD4
+	#define Vertex_Color_Stored_At TEXCOORD2 //Don't leave this empty, even if you disable vertex color
+	//AddUV1 = TEXCOORD1
+	//AddUV2 = TEXCOORD2
+	//AddUV3 = TEXCOORD3
+	//AddUV4 = TEXCOORD4
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define SUBMAP 0 //Enable or disable submap, model will turn black (or has messed up UV) if it don't have submap UV (or if you choose the wrong AddUV )
 
-//#define SubMapTexture "submap.png" //Optional when you disable submap, add double slash at the beginning of the line in case you don't have a submap to put in
+	//#define SubMapTexture "submap.png" //Optional when you disable submap, add double slash at the beginning of the line in case you don't have a submap to put in
 
-#define Sub_Map_Stored_At TEXCOORD1 //Don't leave this empty, even if you disable submap
-//AddUV1 = TEXCOORD1
-//AddUV2 = TEXCOORD2
-//AddUV3 = TEXCOORD3
-//AddUV4 = TEXCOORD4
+	#define Sub_Map_Stored_At TEXCOORD1 //Don't leave this empty, even if you disable submap
+	//AddUV1 = TEXCOORD1
+	//AddUV2 = TEXCOORD2
+	//AddUV3 = TEXCOORD3
+	//AddUV4 = TEXCOORD4
 
-#define Sub_Map_Type 1
-//0: Overwrite (Who use this!?!?)
-//1: Shadow Map (Take dark parts to blend with the diffuse texture)
-//2: Light Map (Take bright parts to blend with the diffuse texture)
-//3: Shadow and Light Map (Take both dark and bright parts to blend with the diffuse texture)
+	#define Sub_Map_Type 1
+	//0: Overwrite (Who use this!?!?)
+	//1: Shadow Map (Take dark parts to blend with the diffuse texture)
+	//2: Light Map (Take bright parts to blend with the diffuse texture)
+	//3: Shadow and Light Map (Take both dark and bright parts to blend with the diffuse texture)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define SOFTSHADOW 0
+#define SOFTSHADOW 2
 //0: MMD's Standard Shadow
 //1: Beamman's SimpleSoftShadow
 //2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)
@@ -92,7 +125,7 @@
 #define ALPHATEST 0
 //Should be enabled for objects have complex texture transparency like trees, some certain models' hair,... that MMD might have trouble rendering/ Or for you lazy-ass don't bother to re-order things like Miku's lace,...)
 
-#define AlphaThreshold 0.5 //Scale: 0-1
+	#define AlphaThreshold 0.5 //Scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
