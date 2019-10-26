@@ -36,6 +36,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Specular map support : [KH40](https://www.deviantart.com/khoast40)
 - Cube map support : AMD (from MME sample pack)
 - Premade tangents support : [KH40](https://www.deviantart.com/khoast40), Internet references
+- Fake Subsurface Scattering : [KH40](https://www.deviantart.com/khoast40)
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
