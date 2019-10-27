@@ -28,6 +28,9 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 - I *accidentally* commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments, sorry about that lol
 
+## Sample models
+- For cubemap, submap testing: https://sta.sh/01c42ecrpsri
+- For fake subsurface scattering testing: https://sta.sh/0v9r5l14kif
 
 ## Credits
 - Original base shader : [舞力介入P](https://www.nicovideo.jp/user/282266)
