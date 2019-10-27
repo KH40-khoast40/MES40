@@ -30,7 +30,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 ## Sample models
 - For cubemap, submap testing: https://sta.sh/01c42ecrpsri
-- For fake subsurface scattering testing: https://sta.sh/0v9r5l14kif
+- For fake subsurface scattering, rim light testing: https://sta.sh/0v9r5l14kif
 
 ## Credits
 - Original base shader : [舞力介入P](https://www.nicovideo.jp/user/282266)
