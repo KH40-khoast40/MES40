@@ -9,6 +9,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72">
 - Premade Tangents **(v1.1)** <img src="https://i.imgur.com/bz9MQ1j.png" alt="alt text" width="256" height="72">
 - Fake Subsurface Scattering **(v1.2)** <img src="https://i.imgur.com/85SwTIc.png" alt="alt text" width="256" height="360">
+- Rim Light **(v1.2)**
 - Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
 - Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
@@ -26,7 +27,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 - If you export a cube map from MikuMikuModel, you have to open it Noesis, and then export it out again (under .dds format), I don't why, but the cube map ripped straight out of MikuMikuModel cause error for the shader
 
-- I *accidentally* commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments, sorry about that lol
+- I commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments, sorry about that lol
 
 ## Sample models
 - For cubemap, submap testing: https://sta.sh/01c42ecrpsri
@@ -39,7 +40,8 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Specular map support : [KH40](https://www.deviantart.com/khoast40)
 - Cube map support : AMD (from MME sample pack)
 - Premade tangents support : [KH40](https://www.deviantart.com/khoast40), Internet references
-- Fake Subsurface Scattering : [KH40](https://www.deviantart.com/khoast40)
+- Fake Subsurface Scattering support : [KH40](https://www.deviantart.com/khoast40)
+- Rim Light support : [KH40](https://www.deviantart.com/khoast40)
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
