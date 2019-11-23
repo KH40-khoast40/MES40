@@ -1,7 +1,9 @@
+My dA: https://www.deviantart.com/khoast40
+
+**Please say the name of the shader, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
+
 # MES40
 MMD Extended Shader with things that MMD doesn't support natively, *"a bit" project-diva-dedicated*
-
-My dA : https://www.deviantart.com/khoast40
 
 ## Features
 - All the existed features that are available in MMD default shader
