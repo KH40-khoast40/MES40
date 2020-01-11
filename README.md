@@ -14,6 +14,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Premade Tangents **(v1.1)** <img src="https://i.imgur.com/bz9MQ1j.png" alt="alt text" width="256" height="72">
 - Fake Subsurface Scattering **(v1.2)** <img src="https://i.imgur.com/85SwTIc.png" alt="alt text" width="256" height="360">
 - Rim Light **(v1.2)**
+- Untinted Spa/CubeMap/Specular **(v1.21)** <img src="https://i.imgur.com/TbyDk5X.png" alt="alt text" width="256" height="72">
 - Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
 - Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
@@ -46,6 +47,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Premade tangents support : [KH40](https://www.deviantart.com/khoast40), Internet references
 - Fake Subsurface Scattering support : [KH40](https://www.deviantart.com/khoast40)
 - Rim Light support : [KH40](https://www.deviantart.com/khoast40)
+- Untinted Spa/CubeMap/Specular support : [KH40](https://www.deviantart.com/khoast40)
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
