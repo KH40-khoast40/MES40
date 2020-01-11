@@ -31,6 +31,8 @@
 #define SpecularLight_Focus 50
 #define SpecularLight_Affected_By_LightDirection 1
 
+#define Spa_CubeMap_SpecularLight_Tint 1
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 float3 Rim_Color = float3(1,1,1);

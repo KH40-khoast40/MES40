@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.2
+//  MMD Extended Shader (MES40) ver 1.21
 //
 //  For credits, go to https://github.com/KH40-khoast40/MES40
 //
@@ -683,23 +683,51 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 V
 		
         // スフィアテクスチャ材質モーフ数
         TexColor.rgb = lerp(spadd?0:1, TexColor * SphereMulValue + SphereAddValue, SphereMulValue.a + SphereAddValue.a);
+		
+		float3 ColorTemp = Color.rgb;
+		float3 ShadowColorTemp = ShadowColor.rgb;
         
 		#if Spa_CubeMap_Use_SpecularMap == 1
 		if(spadd) {
             Color.rgb += TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity;
             ShadowColor.rgb += TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity;
+			
+			ColorTemp = 1 - ( (1-(TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+			ShadowColorTemp = 1 - ( (1-(TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp) );
+			
+			Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+			ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+			
         } else {
             Color.rgb *= TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity;
             ShadowColor.rgb *= TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity;
+			
+			ColorTemp = 1 - ( (1-(TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+			ShadowColorTemp = 1 - ( (1-(TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp) );
+			
+			Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+			ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
         }
 		
 		#else
 		if(spadd) {
             Color.rgb += TexColor.rgb * Spa_CubeMap_Intensity;
             ShadowColor.rgb += TexColor.rgb * Spa_CubeMap_Intensity;
+			
+			ColorTemp = 1 - ( (1-(TexColor.rgb * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+			ShadowColorTemp = 1 - ( (1-(TexColor.rgb * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp) );
+			
+			Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+			ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
         } else {
             Color.rgb *= TexColor.rgb * Spa_CubeMap_Intensity;
             ShadowColor.rgb *= TexColor.rgb * Spa_CubeMap_Intensity;
+			
+			ColorTemp = 1 - ( (1-(TexColor.rgb * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+			ShadowColorTemp = 1 - ( (1-(TexColor.rgb * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp) );
+			
+			Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+			ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
         }
 		#endif
 		
@@ -738,26 +766,56 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 V
 	
 	/////////////////////////////////////////////////////////////////////////////////////
 	
+	float3 ColorTemp1 = Color.rgb;
+	float3 ShadowColorTemp1 = ShadowColor.rgb;
+	
 	#if Spa_CubeMap_Use_SpecularMap == 1
 	Color.rgb += CubeEnv.rgb * SpecularLevel * Spa_CubeMap_Intensity;
 	ShadowColor.rgb += CubeEnv.rgb * SpecularLevel * Spa_CubeMap_Intensity;
 	
+	ColorTemp1 = 1 - ( (1-(CubeEnv.rgb * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ColorTemp1) );
+	ShadowColorTemp1 = 1 - ( (1-(CubeEnv.rgb * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp1) );
+			
+	Color.rgb = lerp( Color.rgb , ColorTemp1 , 1 - Spa_CubeMap_SpecularLight_Tint );
+	ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp1 , 1 - Spa_CubeMap_SpecularLight_Tint );
+	
 	#else
 	Color.rgb += CubeEnv.rgb * Spa_CubeMap_Intensity;
 	ShadowColor.rgb += CubeEnv.rgb * Spa_CubeMap_Intensity;
+	
+	ColorTemp1 = 1 - ( (1-(CubeEnv.rgb * Spa_CubeMap_Intensity)) * (1-ColorTemp1) );
+	ShadowColorTemp1 = 1 - ( (1-(CubeEnv.rgb * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp1) );
+			
+	Color.rgb = lerp( Color.rgb , ColorTemp1 , 1 - Spa_CubeMap_SpecularLight_Tint );
+	ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp1 , 1 - Spa_CubeMap_SpecularLight_Tint );
 	#endif
 	
 	#endif
 	
 	//////////////////////////////////////////////////////////////////////////////////////
 	
+	float3 ColorTemp2 = Color.rgb;
+	float3 ShadowColorTemp2 = ShadowColor.rgb;
+	
 	#if SpecularLight_Use_SpecularMap == 1
     Color.rgb += Specular * SpecularLevel * SpecularLight_Intensity;
 	ShadowColor.rgb += Specular * SpecularLevel * SpecularLight_Intensity;
 	
+	ColorTemp2 = 1 - ( (1-(Specular * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ColorTemp2) );
+	ShadowColorTemp2 = 1 - ( (1-(Specular * SpecularLevel * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp2) );
+			
+	Color.rgb = lerp( Color.rgb , ColorTemp2 , 1 - Spa_CubeMap_SpecularLight_Tint );
+	ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp2 , 1 - Spa_CubeMap_SpecularLight_Tint );
+	
 	#else
     Color.rgb += Specular * SpecularLight_Intensity;
 	ShadowColor.rgb += Specular * SpecularLight_Intensity;
+	
+	ColorTemp2 = 1 - ( (1-(Specular * Spa_CubeMap_Intensity)) * (1-ColorTemp2) );
+	ShadowColorTemp2 = 1 - ( (1-(Specular * Spa_CubeMap_Intensity)) * (1-ShadowColorTemp2) );
+			
+	Color.rgb = lerp( Color.rgb , ColorTemp2 , 1 - Spa_CubeMap_SpecularLight_Tint );
+	ShadowColor.rgb = lerp( ShadowColor.rgb , ShadowColorTemp2 , 1 - Spa_CubeMap_SpecularLight_Tint );
 	#endif
 	
 	#if VERTEXCOLOR == 1

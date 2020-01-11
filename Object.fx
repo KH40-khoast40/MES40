@@ -26,7 +26,7 @@
 
 //See custom_basic.png for details, leave these things alone if you want to keep the same setting as MMD's default shader
 
-#define Toon_Intensity 1 //Set this value larger than 1 with subsurface toon on will break the subsurface toon's color
+#define Toon_Intensity 1 //Should only be set somewhere from 0 to 1, out of that range will cause visual problems
 #define Toon_Brightness 1
 #define Toon_Gradient 3 //MMD default is 3
 
@@ -36,6 +36,8 @@
 #define SpecularLight_Intensity 1
 #define SpecularLight_Focus 50 //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
 #define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
+
+#define Spa_CubeMap_SpecularLight_Tint 1 //Should be set from 0 to 1. 1 will give the tinted shine as vanilla MMD, 0 will give a dull, untinted shine, values between 0 and 1 are the blends of the two
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +112,7 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define SOFTSHADOW 2
+#define SOFTSHADOW 0
 //0: MMD's Standard Shadow
 //1: Beamman's SimpleSoftShadow
 //2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)

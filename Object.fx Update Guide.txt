@@ -1,47 +1,18 @@
 
-Ver 1.11 -> Ver 1.2
+Ver 1.2 -> Ver 1.21
 
-	Add this caution to the #define Toon_Intensity line:      //Set this value larger than 1 with subsurface toon on will break the subsurface toon's color
+New line is line 10, only that one (use NotePad++ to see the line number) //////////////////////////////////////////////////
 
-	New lines are from line 12 to line 44 (use NotePad++ to see the line number) //////////////////////////////////////////////////
+	
+	...
+	#define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
+
+	#Spa_CubeMap_SpecularLight_Tint 1 //Should be set from 0 to 1. 1 will give the tinted shine as vanilla MMD, 0 will give a dull, untinted shine, values between 0 and 1 are the blends of the two
 
 
-			...
-			#define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//See custom_rim.png for details
 
-			//See custom_rim.png for details
-
-			float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
-
-				#define Rim_Intensity 0 //Set it 0 to disable rim lighting completely
-				#define Rim_Gradient 3
-					
-				//#define Rim_Shadow_Area_Intensity 0.5 //Add double slash at the beginning of the line to auto-caculate the value
-					
-				#define Rim_Use_NormalMap 1 //Apply for the subsurface rim glow too, since they are basically the same thing
-				#define Rim_Use_SpecularMap 1
-				
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			//See custom_subsurface.png for details
-
-			#define SUBSURFACETOON 0 //Enable or disable subsurface toon, can be use as fake subsurface scattering, might take a while to get a decent result
-
-				float3 Subsurface_Toon_Color = float3(1,0,0); //RGB value, scale: 0-1
-				
-				//#define ThicknessMapTexture "thickness.png" //Thickness Map (Optional, delete the double slash at the beginning of the line to enable it), it should be the AO map generated from Metaseq, Blender,...
-
-				#define Subsurface_Toon_Intensity 0.5
-				#define Subsurface_Toon_Gradient 2.5 //Should be around 85% - 125% of the Toon_Gradient's value, but feel free to try any number
-				
-				#define Subsurface_Rim_Glow_Intensity 0.25
-				#define Subsurface_Rim_Glow_Gradient 0.75
-				
-				//#define Subsurface_Rim_Glow_Shadow_Area_Intensity 0.5 //Add double slash at the beginning of the line to auto-caculate the value
-
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			#define TANGENT 0
-			...
+	float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
+	...
