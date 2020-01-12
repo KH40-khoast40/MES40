@@ -1,5 +1,6 @@
-My Deviantart: https://www.deviantart.com/khoast40
-My Youtube: https://www.youtube.com/channel/UC-kAQLlsh4ImSttqB-3ZdEA
+**My Deviantart:** https://www.deviantart.com/khoast40
+
+**My Youtube:** https://www.youtube.com/channel/UC-kAQLlsh4ImSttqB-3ZdEA
 
 **Please say the name of the shader, or credit me, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
 
