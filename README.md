@@ -1,6 +1,7 @@
-My dA: https://www.deviantart.com/khoast40
+My Deviantart: https://www.deviantart.com/khoast40
+My Youtube: https://www.youtube.com/channel/UC-kAQLlsh4ImSttqB-3ZdEA
 
-**Please say the name of the shader, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
+**Please say the name of the shader, or credit me, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
 
 # MES40
 MMD Extended Shader with things that MMD doesn't support natively, *"a bit" project-diva-dedicated*
@@ -30,9 +31,9 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 ## Notices
 
-- If you export a cube map from MikuMikuModel, you have to open it Noesis, and then export it out again (under .dds format), I don't why, but the cube map ripped straight out of MikuMikuModel cause error for the shader
+- If you export a cube map from MikuMikuModel, you have to open it Noesis, and then export it out again (under .dds format), I don't why, but the cube map ripped straight out of MikuMikuModel cause error for the shader.
 
-- I commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments, sorry about that lol
+- I commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments.
 
 ## Sample models
 - For cubemap, submap testing: https://sta.sh/01c42ecrpsri
