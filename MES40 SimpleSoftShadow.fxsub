@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.21
+//  MMD Extended Shader (MES40) ver 1.22 by KH40 (https://www.deviantart.com/khoast40)
 //
-//  For credits, go to https://github.com/KH40-khoast40/MES40
+//  For full credits, go to https://github.com/KH40-khoast40/MES40
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // ÉpÉâÉÅÅ[É^êÈåæ
@@ -591,7 +591,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
 	float2 Tex = IN.TexUVs.xy;
 	float2 SubMapUV = IN.TexUVs.zw;
 
-	float4 VertexColor = float4(IN.VColor.r,IN.VColor.g,IN.VColor.b,IN.VColor.a);
+	float4 VertexColor = float4(lerp(float3(1,1,1),float3(IN.VColor.r,IN.VColor.g,IN.VColor.b),Vertex_Color_Intensity),IN.VColor.a);
 	
 	#ifdef SubMapTexture
 	float3 SubMap = tex2D(SubMapSamp,SubMapUV);

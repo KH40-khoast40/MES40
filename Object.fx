@@ -1,3 +1,4 @@
+//Customizable settings for MES40
 
 //Custom settings per object (Apply this fx to the object)
 
@@ -85,6 +86,8 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VERTEXCOLOR 0 //Enable or disable vertex color, model will turn black (or has messed up color) if it don't have vertex color (or if you choose the wrong AddUV )
+
+	#define Vertex_Color_Intensity 1 // Setting it 0 does the same thing as disabling vertex color, except the transparency will still be affected, the higher/lower the value is, the more/less visible the vertex color is
 
 	#define Vertex_Color_Stored_At TEXCOORD2 //Don't leave this empty, even if you disable vertex color
 	//AddUV1 = TEXCOORD1

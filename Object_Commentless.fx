@@ -1,3 +1,4 @@
+//Customizable settings for MES40
 
 //I have to shut up
 
@@ -74,6 +75,8 @@ float3 Rim_Color = float3(1,1,1);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VERTEXCOLOR 0
+
+	#define Vertex_Color_Intensity 1
 
 	#define Vertex_Color_Stored_At TEXCOORD2
 	//AddUV1 = TEXCOORD1
