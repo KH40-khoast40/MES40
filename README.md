@@ -43,7 +43,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 ⚠️ **I am not responsible for any damages that are caused by the use of the shader**, please consider carefully when you use the shader.
 
-🗿 **Beside that annoying begging for credit I just make at the top, you should include the MES40_credit.txt in your model folder if you distribute the model, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
+🗿 **Beside that annoying begging for credit I just make at the top, you should include the *MES40_credits.txt* in your model folder if you distribute the model, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
 
 
 ## Sample models
@@ -54,6 +54,8 @@ If you want to update your existing Object.fx to the newer version, read *Object
 **If you don't want part of your work be included in the shader, please inform me.**
 
 **If I forget to credit you, please inform me as well.**
+
+**If you want me to change your social account link, please inform me as well.**
 - Original base shader : [舞力介入P](https://www.nicovideo.jp/user/282266)
 - Animated texture support : ??? (from MME sample pack)
 - Normal map support : [LessThanEqual](https://twitter.com/lessthanequal?lang=en) (AlternativeFull)
