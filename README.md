@@ -45,7 +45,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 ⚠️ **I am not responsible for any damages that are caused by the use of the shader**, please consider carefully when you use the shader.
 
-🗿 **Beside that annoying begging for credit I just make at the top, you should include the *MES40_credits.txt* in your DL if you use the shader, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
+🗿 **Beside that annoying begging for credit I made at the top, you should include the *MES40_credits.txt* in your DL if you use the shader, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
 
 
 ## Sample models
