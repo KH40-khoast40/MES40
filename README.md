@@ -37,13 +37,15 @@ If you want to update your existing Object.fx to the newer version, read *Object
 
 ❌ **Commercial use is not allowed**, please use other shaders that allow this.
 
-❌ **Redistributing the shader (putting the shader as the main focus of the DL) is not allowed**, you can link this page or my dA post of the shader for the viewers to download.
+❌ **Redistributing the shader (putting the intact shader as the main focus of the DL) is not allowed**, you can link this page or my dA post of the shader for the viewers to download it directly.
+
+✔️ **However, it's fine for you to put your modification of the shader for DL.**
 
 ⚠️ The shader itself is not limited to any kind of contents. **The usage limit completely depends on the model you are going to apply the shader to.**
 
 ⚠️ **I am not responsible for any damages that are caused by the use of the shader**, please consider carefully when you use the shader.
 
-🗿 **Beside that annoying begging for credit I just make at the top, you should include the *MES40_credits.txt* in your model folder if you distribute the model, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
+🗿 **Beside that annoying begging for credit I just make at the top, you should include the *MES40_credits.txt* in your DL if you use the shader, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
 
 
 ## Sample models
