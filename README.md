@@ -1,8 +1,8 @@
+**Please say the name of the shader, or credit me, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
+
 **My Deviantart:** https://www.deviantart.com/khoast40
 
 **My Youtube:** https://www.youtube.com/channel/UC-kAQLlsh4ImSttqB-3ZdEA
-
-**Please say the name of the shader, or credit me, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
 
 # MES40
 MMD Extended Shader with things that MMD doesn't support natively, *"a bit" project-diva-dedicated*
@@ -30,23 +30,36 @@ For in-depth customization, I've written comments explaining things in the Objec
 
 If you want to update your existing Object.fx to the newer version, read *Object.fx Update Guide.txt*
 
-## Notices
+## Rules
+✔️ **Modification is allowed (duh), you can customize the shader, or add new features to it all you want.**
 
-- If you export a cube map from MikuMikuModel, you have to open it Noesis, and then export it out again (under .dds format), I don't why, but the cube map ripped straight out of MikuMikuModel cause error for the shader.
+✔️ **Including the shader with the models you distribute is allowed.**
 
-- I commented a little too much on the Object.fx (about how things work) that it might make the code even harder to read, so use Object_Commentless.fx if you get confused in distinguishing the actual codes and the comments.
+❌ **Commercial use is not allowed**, please use other shaders that allow this.
+
+❌ **Redistributing the shader (putting the shader as the main focus of the DL) is not allowed**, you can link this page or my dA post of the shader for the viewers to download.
+
+⚠️ The shader itself is not limited to any kind of contents. **The usage limit completely depends on the model you are going to apply the shader to.**
+
+⚠️ **I am not responsible for any damages that are caused by the use of the shader**, please consider carefully when you use the shader.
+
+🗿 **Beside that annoying begging for credit I just make at the top, you should include the MES40_credit.txt in your model folder if you distribute the model, the shader is not the work of mine alone, so a full credits would be nice.** The txt will be updated alongside the shader.
+
 
 ## Sample models
 - For cubemap, submap testing: https://sta.sh/01c42ecrpsri
 - For fake subsurface scattering, rim light testing: https://sta.sh/0v9r5l14kif
 
 ## Credits
+**If you don't want part of your work be included in the shader, please inform me.**
+
+**If I forget to credit you, please inform me as well.**
 - Original base shader : [舞力介入P](https://www.nicovideo.jp/user/282266)
 - Animated texture support : ??? (from MME sample pack)
 - Normal map support : [LessThanEqual](https://twitter.com/lessthanequal?lang=en) (AlternativeFull)
 - Specular map support : [KH40](https://www.deviantart.com/khoast40)
 - Cube map support : AMD (from MME sample pack)
-- Premade tangents support : [KH40](https://www.deviantart.com/khoast40), Internet references
+- Premade tangents support : [KH40](https://www.deviantart.com/khoast40), [Minmode](https://www.deviantart.com/minmode)
 - Fake Subsurface Scattering support : [KH40](https://www.deviantart.com/khoast40)
 - Rim Light support : [KH40](https://www.deviantart.com/khoast40)
 - Untinted Spa/CubeMap/Specular support : [KH40](https://www.deviantart.com/khoast40)
