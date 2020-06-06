@@ -4,6 +4,8 @@
 
 **My Youtube:** https://www.youtube.com/channel/UC-kAQLlsh4ImSttqB-3ZdEA
 
+**My Discord:** KH40#9207
+
 # MES40
 MMD Extended Shader with things that MMD doesn't support natively, *"a bit" project-diva-dedicated*
 
