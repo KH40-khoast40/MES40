@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.22 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 1.3 by KH40 (https://www.deviantart.com/khoast40)
 //
-//  For full credits, go to https://github.com/KH40-khoast40/MES40
+//  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // パラメータ宣言
@@ -11,6 +11,7 @@
 float4x4 WorldViewProjMatrix      : WORLDVIEWPROJECTION;
 float4x4 WorldMatrix              : WORLD;
 float4x4 ViewMatrix               : VIEW;
+float4x4 WorldViewMatrix          : WORLDVIEW;
 float4x4 LightWorldViewProjMatrix : WORLDVIEWPROJECTION < string Object = "Light"; >;
 
 float3   LightDirection    : DIRECTION < string Object = "Light"; >;
@@ -46,46 +47,6 @@ bool     transp;   // 半透明フラグ
 bool	 spadd;    // スフィアマップ加算合成フラグ
 #define SKII1    1500
 #define SKII2    8000
-
-//////////////////////////////////////////
-#ifndef Toon_Intensity
-	#define Toon_Intensity 1
-#endif
-//////////////////////////////////////////
-#ifndef Toon_Brightness
-	#define Toon_Brightness 1
-#endif
-//////////////////////////////////////////
-#ifndef Toon_Gradient
-	#define Toon_Gradient 3
-#endif
-//////////////////////////////////////////
-
-
-//////////////////////////////////////////
-#ifndef Spa_CubeMap_Intensity
-	#define Spa_CubeMap_Intensity 1
-#endif
-//////////////////////////////////////////
-#ifndef Spa_CubeMap_Saturation
-	#define Spa_CubeMap_Saturation 1
-#endif
-//////////////////////////////////////////
-
-
-//////////////////////////////////////////
-#ifndef SpecularLight_Intensity
-	#define SpecularLight_Intensity 1
-#endif
-//////////////////////////////////////////
-#ifndef SpecularLight_Focus
-	#define SpecularLight_Focus SpecularPower
-#endif
-//////////////////////////////////////////
-#ifndef SpecularLight_Affected_By_LightDirection
-	#define SpecularLight_Affected_By_LightDirection 1
-#endif
-//////////////////////////////////////////
 
 // オブジェクトのテクスチャ
 #ifndef AnimatedTexture
@@ -240,6 +201,96 @@ sampler2D ThicknessMapSamp = sampler_state {
 	ADDRESSV  = WRAP;
 	MAXANISOTROPY = 16;
 };
+#endif
+
+#ifdef HeightMapTexture
+//Height Map
+texture2D HeightMap <
+	string ResourceName = HeightMapTexture;
+	int MipLevels = 0;
+>;
+sampler2D HeightMapSamp = sampler_state {
+	texture = <HeightMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+
+float3 ParallaxOcclusionDirection(float3 normal, float3 worldPos, float2 coord)
+{
+	float3 viewNormal = mul(normal, (float3x3)WorldViewMatrix);
+	float3 viewPosition = mul(float4(worldPos, 1), WorldViewMatrix).xyz;
+	float3 viewdir = normalize(-viewPosition);
+
+	float3 dp1 = ddx(viewPosition);
+	float3 dp2 = ddy(viewPosition);
+
+	float2 duv1 = ddx(coord);
+	float2 duv2 = ddy(coord);
+
+	float3x3 M = float3x3(dp1, dp2, viewNormal);
+	float2x3 I = float2x3(cross(M[1], M[2]), cross(M[2], M[0]));
+	   
+	float2 proj = mul(I, viewdir) / dot(dp1, I[0]);
+
+	float3 direction;
+	direction.xy = duv1 * proj.x + duv2 * proj.y;
+	direction.z = dot(viewNormal, viewdir);
+
+	return direction;
+}
+
+float2 ParallaxOcclusionMap(sampler2D heightMap, float2 coord, float3 V, int numSteps, float parallaxScale)
+{
+	float step = 1.0 / numSteps;
+	float2 delta = parallaxScale * V.xy / (-V.z * numSteps);
+
+	float curLayerHeight = 0;
+	float curHeight = tex2D(heightMap, coord).r;
+	float2 curTexcoord = coord;
+
+	[unroll]
+	for (int i = 0; i < numSteps; i++)
+	{
+		if (curHeight <= curLayerHeight)
+			break;
+
+		curLayerHeight += step; 
+		curTexcoord -= delta;
+		curHeight = tex2D(heightMap, curTexcoord).r;
+	}
+
+	float2 deltaTexcoord = delta * 0.5;
+	float deltaHeight = step * 0.5;
+
+	curTexcoord += deltaTexcoord;
+	curLayerHeight -= deltaHeight;
+
+	[unroll]
+	for (int j = 0; j < 5; j++)
+	{
+		deltaTexcoord *= 0.5;
+		deltaHeight *= 0.5;
+
+		curHeight = tex2D(heightMap, curTexcoord).r;
+
+		if (curHeight > curLayerHeight)
+		{
+			curTexcoord -= deltaTexcoord;
+			curLayerHeight += deltaHeight;
+		}
+		else
+		{
+			curTexcoord += deltaTexcoord;
+			curLayerHeight -= deltaHeight;
+		}
+	}
+
+	return curTexcoord;
+}
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -534,17 +585,19 @@ struct BufferShadow_OUTPUT {
     float2 SpTex    : TEXCOORD4;	 // スフィアマップテクスチャ座標
 	float3 ViewVec  : TEXCOORD5;
 	float4 VColor	: TEXCOORD6;
-	float4 Tangent  : TEXCOORD7;
+	float4 PosWorld : TEXCOORD7;
     float4 Color    : COLOR0;       // ディフューズ色
 };
 
 // 頂点シェーダ
-BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At , float4 Tangent : Tangent_Stored_At , uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon)
+BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At , uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon)
 {
     BufferShadow_OUTPUT Out = (BufferShadow_OUTPUT)0;
 
     // カメラ視点のワールドビュー射影変換
     Out.Pos = mul( Pos, WorldViewProjMatrix );
+	
+	Out.PosWorld = mul( Pos, WorldMatrix );
     
     // カメラとの相対位置
     Out.Eye = CameraPosition - mul( Pos, WorldMatrix );
@@ -556,8 +609,6 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 	Out.ViewVec = CameraPosition - mul(Pos, WorldMatrix);
 	
 	Out.VColor = VColor;
-	
-	Out.Tangent = Tangent;
 	
 	Out.TexUVs = float4(Tex,SubMapUV);
     
@@ -586,41 +637,33 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, float3 V
 	float2 Tex = IN.TexUVs.xy;
 	float2 SubMapUV = IN.TexUVs.zw;
 	
+	#if PARALLAX == 1
+	float3 ParallaxViewDirection = ParallaxOcclusionDirection(IN.Normal, IN.PosWorld.xyz, Tex);
+	Tex = ParallaxOcclusionMap(HeightMapSamp, Tex, ParallaxViewDirection, 15, Parallax_Scale);
+	#endif
+	
 	float4 VertexColor = float4(lerp(float3(1,1,1),float3(IN.VColor.r,IN.VColor.g,IN.VColor.b),Vertex_Color_Intensity),IN.VColor.a);
 	
 	#ifdef SubMapTexture
 	float3 SubMap = tex2D(SubMapSamp,SubMapUV);
 	#endif
 	
-	float3 Binormal = -(cross(IN.Normal.xyz, IN.Tangent.xyz) * IN.Tangent.w);
-	float3x3 TBN = transpose( float3x3(normalize(IN.Tangent.xyz), normalize(Binormal), normalize(IN.Normal)) );
-	
 	//////////////////////Normal Map related values//////////////////////////////////////
 	#ifdef NormalMapTexture
 		
 		float4 NormalColor = tex2D( NormalMapSamp, Tex) * 2;
 		
-		#if TANGENT == 0
-			float3 NormalDirection = normalize(IN.Normal);
-			float3 V = normalize(IN.Eye);
+		float3 NormalDirection = normalize(IN.Normal);
+		float3 V = normalize(IN.Eye);
 			
-			NormalColor = NormalColor.rgba;
-			NormalColor.a = 1;
-			float3x3 tangentFrame = compute_tangent_frame(NormalDirection, V, Tex);
-			NormalDirection = normalize(mul(NormalColor - 1.0f, tangentFrame));
-		
-		#else
-			float3 NormalDirection = normalize(mul( NormalColor - 1.0f, TBN ));
-		#endif
-		
+		NormalColor = NormalColor.rgba;
+		NormalColor.a = 1;
+		float3x3 tangentFrame = compute_tangent_frame(NormalDirection, V, Tex);
+		NormalDirection = normalize(mul(NormalColor - 1.0f, tangentFrame));
+	
 	#else
 		
-		#if TANGENT == 0
-			float3 NormalDirection = normalize(IN.Normal);
-		
-		#else
-			float3 NormalDirection = normalize(mul( float3(0,0,1), TBN ));
-		#endif
+		float3 NormalDirection = normalize(IN.Normal);
 		
 	#endif
 	/////////////////////////////////////////////////////////////////////////////////////

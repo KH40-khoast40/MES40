@@ -75,14 +75,12 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define TANGENT 0 //Enable or disable tangent, the model's normals will be messed up if it don't have pre-made tangent (or if you choose the wrong AddUV )
+#define PARALLAX 0 //Enable or disable parallax effect
 
-	#define Tangent_Stored_At TEXCOORD3 //Don't leave this empty, even if you disable tangent
-	//AddUV1 = TEXCOORD1
-	//AddUV2 = TEXCOORD2
-	//AddUV3 = TEXCOORD3
-	//AddUV4 = TEXCOORD4
-
+	//#define HeightMapTexture "height.png" //The whiter, the higher (Optional when you disable parallax, delete the double slash at the beginning of the line to enable it)
+	
+	#define Parallax_Scale 0.1 //Equal to parallaxMapScale in RayCast
+	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VERTEXCOLOR 0 //Enable or disable vertex color, model will turn black (or has messed up color) if it don't have vertex color (or if you choose the wrong AddUV )

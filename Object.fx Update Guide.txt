@@ -1,19 +1,29 @@
 
-Ver 1.21 -> Ver 1.22
+Ver 1.221 -> Ver 1.3
 
-New line is line 11, only that one (use NotePad++ to see the line number) //////////////////////////////////////////////////
 
-	
+Replace line 8-18 with line 21-29
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define VERTEXCOLOR 0 //Enable or disable vertex color, model will turn black (or has messed up color) if it don't have vertex color (or if you choose the wrong AddUV )
+#define TANGENT 0 //Enable or disable tangent, the model's normals will be messed up if it don't have pre-made tangent (or if you choose the wrong AddUV )
 
-	#define Vertex_Color_Intensity 1 // Setting it 0 does the same thing as disabling vertex color, except the transparency will still be affected, the higher/lower the value is, the more/less visible the vertex color is
-
-	#define Vertex_Color_Stored_At TEXCOORD2 //Don't leave this empty, even if you disable vertex color
+	#define Tangent_Stored_At TEXCOORD3 //Don't leave this empty, even if you disable tangent
 	//AddUV1 = TEXCOORD1
 	//AddUV2 = TEXCOORD2
 	//AddUV3 = TEXCOORD3
 	//AddUV4 = TEXCOORD4
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define PARALLAX 0 //Enable or disable parallax effect
+
+	//#define HeightMapTexture "height.png" //The whiter, the higher (Optional when you disable parallax, delete the double slash at the beginning of the line to enable it)
+	
+	#define Parallax_Scale 0.1 //Equal to parallaxMapScale in RayCast
+	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
