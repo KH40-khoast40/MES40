@@ -15,10 +15,11 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Normal Map <img src="https://i.imgur.com/5ia4FJx.png" alt="alt text" width="256" height="72">
 - Specular Map 
 - Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72">
-- Premade Tangents **(v1.1)** <img src="https://i.imgur.com/bz9MQ1j.png" alt="alt text" width="256" height="72">
+- ~~Premade Tangents **(v1.1)**~~ (removed) <img src="https://i.imgur.com/bz9MQ1j.png" alt="alt text" width="256" height="72">
 - Fake Subsurface Scattering **(v1.2)** <img src="https://i.imgur.com/85SwTIc.png" alt="alt text" width="256" height="360">
 - Rim Light **(v1.2)**
 - Untinted Spa/CubeMap/Specular **(v1.21)** <img src="https://i.imgur.com/TbyDk5X.png" alt="alt text" width="256" height="72">
+- Parallax **(v1.3)** <img src="https://i.imgur.com/wzwMYuQ.png" alt="alt text" width="256" height="72">
 - Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
 - Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
@@ -65,10 +66,11 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Normal map support : [LessThanEqual](https://twitter.com/lessthanequal?lang=en) (AlternativeFull)
 - Specular map support : [KH40](https://www.deviantart.com/khoast40)
 - Cube map support : AMD (from MME sample pack)
-- Premade tangents support : [KH40](https://www.deviantart.com/khoast40), [Minmode](https://www.deviantart.com/minmode)
+- ~~Premade tangents support~~ (removed) : [KH40](https://www.deviantart.com/khoast40), [Minmode](https://www.deviantart.com/minmode)
 - Fake Subsurface Scattering support : [KH40](https://www.deviantart.com/khoast40)
 - Rim Light support : [KH40](https://www.deviantart.com/khoast40)
 - Untinted Spa/CubeMap/Specular support : [KH40](https://www.deviantart.com/khoast40)
+- Parallax support : [Rui (Ray-cast)](https://twitter.com/Rui_cg)
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
