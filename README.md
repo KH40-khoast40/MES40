@@ -1,4 +1,4 @@
-**Please say the name of the shader, or credit me, or link this page in your credits if you use this shader, thank you very much, I'm appreciate it!**
+**Please say the name of the shader, or credit me, or link this page in your credits if you use this shader (more of this in the Rules section), thank you very much, I'm appreciate it!**
 
 **My Deviantart:** https://www.deviantart.com/khoast40
 
