@@ -27,6 +27,7 @@
 
 #define Spa_CubeMap_Intensity 1
 #define Spa_CubeMap_Saturation 1
+#define CubeMap_Affected_By_LightDirection 0
 
 #define SpecularLight_Intensity 1
 #define SpecularLight_Focus 50

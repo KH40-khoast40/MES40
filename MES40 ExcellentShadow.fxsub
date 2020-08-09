@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.3 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 1.31 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -637,9 +637,8 @@ struct BufferShadow_OUTPUT {
     float3 Eye      : TEXCOORD3;    // カメラとの相対位置
     float2 SpTex    : TEXCOORD4;	 // スフィアマップテクスチャ座標
 	float4 ScreenTex: TEXCOORD5;   // スクリーン座標
-	float3 ViewVec  : TEXCOORD6;
-	float4 VColor	: TEXCOORD7;
-	float4 PosWorld : TEXCOORD8;
+	float4 VColor	: TEXCOORD6;
+	float4 PosWorld : TEXCOORD7;
     float4 Color    : COLOR0;       // ディフューズ色
 };
 
@@ -659,8 +658,6 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
     Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
 	// ライト視点によるワールドビュー射影変換
     Out.ZCalcTex = mul( Pos, LightWorldViewProjMatrix );
-	
-	Out.ViewVec = CameraPosition - mul(Pos, WorldMatrix);
 	
 	Out.VColor = VColor;
 	
@@ -698,7 +695,7 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 }
 
 // ピクセルシェーダ
-float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon) : COLOR
+float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon) : COLOR
 {
 	float2 Tex = IN.TexUVs.xy;
 	float2 SubMapUV = IN.TexUVs.zw;
@@ -851,16 +848,22 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, float3 ViewVec: TEXCOORD0, unifor
 	
 	#ifdef CubeMapTexture
 	
+	float3 CubeMapRefVec;
+	
+	#if CubeMap_Affected_By_LightDirection == 0
+	CubeMapRefVec = normalize(IN.Eye);
+	#else
+	CubeMapRefVec = normalize(normalize(IN.Eye)-LightDirection);
+	#endif
+	
 	#if Spa_CubeMap_Use_NormalMap == 1
-	ViewVec = normalize(IN.ViewVec);
-	float3 ReflVec = reflect(-ViewVec, NormalDirection);
+	float3 ReflVec = reflect(-CubeMapRefVec, NormalDirection);
 	float4 Reflection = texCUBE(CubeMapSamp, ReflVec.xyz);
 	
 	float4 CubeEnv = Reflection;
 	
 	#else
-	ViewVec = normalize(IN.ViewVec);
-	float3 ReflVec = reflect(-ViewVec, IN.Normal);
+	float3 ReflVec = reflect(-CubeMapRefVec, IN.Normal);
 	float4 Reflection = texCUBE(CubeMapSamp, ReflVec.xyz);
 	
 	float4 CubeEnv = Reflection;
