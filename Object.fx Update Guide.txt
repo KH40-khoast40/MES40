@@ -1,13 +1,17 @@
 
-Ver 1.3 -> Ver 1.31
+Ver 1.31 -> Ver 1.4
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-New line is line 11
+Change:
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//0: MMD's Standard Shadow
+//1: Beamman's SimpleSoftShadow
+//2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)
 
-#define Spa_CubeMap_Intensity 1
-#define Spa_CubeMap_Saturation 1
-#define CubeMap_Affected_By_LightDirection 0 //1 is enabled, 0 is disabled
-	
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+To:
+
+//0: MMD's Standard Shadow
+//1: Beamman's SimpleSoftShadow
+//2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)
+//3: Rotated Poisson Shadow (Edited SimpleSoftShadow) (Some settings are in the fxsub)

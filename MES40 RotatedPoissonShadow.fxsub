@@ -7,6 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // パラメータ宣言
 
+#define ShadowNoise_Scale 0.025 //Noise size, you might want to change it into a larger number (~0.05) to render >1080p things, but you would see the noise's repeating pattern more clearly
+#define Shadow_Quality 9 //From 1 to 9, 1 the is lowest setting, the higher ones can reduce performance, but my potato can handle them just fine so yolo
+
 //Shadow blur rate
 float SoftShadowParam = 0.25;
 
@@ -297,6 +300,20 @@ float2 ParallaxOcclusionMap(sampler2D heightMap, float2 coord, float3 V, int num
 	return curTexcoord;
 }
 #endif
+
+texture ShadowNoiseTex <
+    string ResourceName = "shadownoise.png";
+    int MipLevels = 1;
+>;
+sampler ShadowNoiseSmp = sampler_state {
+    texture = <ShadowNoiseTex>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // 輪郭描画
@@ -634,7 +651,7 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 }
 
 // ピクセルシェーダ
-float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon) : COLOR
+float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon, float2 ScreenSpace : VPos) : COLOR
 {
 	float2 Tex = IN.TexUVs.xy;
 	float2 SubMapUV = IN.TexUVs.zw;
@@ -923,32 +940,144 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
     } else {
         float comp = 0;
 		float compSSS = 0;
+		
+		float2 ShadowNoise = tex2D(ShadowNoiseSmp,ScreenSpace*ShadowNoise_Scale).rg;
+		
 		float U = SoftShadowParam / SHADOWMAP_SIZE;
 		float V = SoftShadowParam / SHADOWMAP_SIZE;
+		
+		float2 PoissonOffset = float2
+		(
+        ShadowNoise.x * U - ShadowNoise.y * V,
+        ShadowNoise.y * U + ShadowNoise.x * V
+		);
+		
         if(parthf) {
             // セルフシャドウ mode2
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,0)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,0)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,0)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,-PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,-PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 2
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,-PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,-PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 3
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,-PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,-PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 4
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,-PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,-PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 5
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,-PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,-PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 6
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,-PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,-PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 7
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,-PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,-PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,PoissonOffset.y+V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 8
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,-PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,-PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,PoissonOffset.y)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			
+			#if Shadow_Quality >= 9
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,-PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,-PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,PoissonOffset.y-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
         } else {
             // セルフシャドウ mode1
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,0)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,0)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,0)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,-V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,-V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,-V)).r , 0.0f)*SKII1-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,-PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,-PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 2
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,-PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,-PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 3
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,-PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,-PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 4
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,-PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,-PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 5
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,-PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,-PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 6
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,-PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x+U,-PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x+U,PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 7
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,-PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,-PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,PoissonOffset.y+V)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 8
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,-PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x-U,-PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x-U,PoissonOffset.y)).r , 0.0f)*SKII1-0.3f);
+			
+			#if Shadow_Quality >= 9
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,-PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(PoissonOffset.x,-PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+				comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-PoissonOffset.x,PoissonOffset.y-V)).r , 0.0f)*SKII1-0.3f);
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
+			#endif
         }
-        comp = 1-saturate(comp/9);
+        comp = 1-saturate(comp/(Shadow_Quality*4));
 		compSSS = comp;
         if ( useToon ) {
             // トゥーン適用

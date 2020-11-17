@@ -107,6 +107,7 @@ float3 Rim_Color = float3(1,1,1);
 //0: MMD's Standard Shadow
 //1: Beamman's SimpleSoftShadow
 //2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)
+//3: Rotated Poisson Shadow (Edited SimpleSoftShadow) (Some settings are in the fxsub)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -126,4 +127,6 @@ float3 Rim_Color = float3(1,1,1);
 	#include "MES40 SimpleSoftShadow.fxsub"
 #elif SOFTSHADOW == 2
 	#include "MES40 ExcellentShadow.fxsub"
+#elif SOFTSHADOW == 3
+	#include "MES40 RotatedPoissonShadow.fxsub"
 #endif
