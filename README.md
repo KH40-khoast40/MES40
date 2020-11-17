@@ -76,6 +76,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
 - SimpleSoftShadow : [ビームマンP](https://w.atwiki.jp/beamman)
 - ExcellentShadow : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
+- RotatedPoissonShadow : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 - Mixing shaders : [KH40](https://www.deviantart.com/khoast40)
 - Special thanks : [FlyingSpirits-P](https://www.deviantart.com/flyingspirits-p), [Minmode](https://www.deviantart.com/minmode)
   
