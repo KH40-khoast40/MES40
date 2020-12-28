@@ -10,16 +10,21 @@
 
 //#define AnimatedTexture "animated.gif" //GIF or APNG (Optional, delete the double slash at the beginning of the line to enable it)
 
-//#define NormalMapTexture  "noneN.png" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
+//#define NormalMapTexture  ".png" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
 
 	#define Toon_Use_NormalMap 1
 	#define Spa_CubeMap_Use_NormalMap 1
 	#define SpecularLight_Use_NormalMap 1
 	
-//#define SpecularMapTexture  "noneS.png" //Specular Map (Optional, delete the double slash at the beginning of the line to enable it)
+	#define NormalMap_Intensity 1
+	#define NormalMap_Animated 0
+	
+//#define SpecularMapTexture  ".png" //Specular Map (Optional, delete the double slash at the beginning of the line to enable it)
 
 	#define Spa_CubeMap_Use_SpecularMap 1
 	#define SpecularLight_Use_SpecularMap 1
+	
+	#define SpecularMap_Animated 0
 
 //#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
 
@@ -130,7 +135,7 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 #define ALPHATEST 0
 //Should be enabled for objects have complex texture transparency like trees, some certain models' hair,... that MMD might have trouble rendering/ Or for you lazy-ass don't bother to re-order things like Miku's lace,...)
 
-	#define AlphaThreshold 0.5 //Scale: 0-1
+	#define Alpha_Threshold 0.5 //Scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

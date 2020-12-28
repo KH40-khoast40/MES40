@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.4 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 1.41 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -49,24 +49,20 @@ bool	 spadd;    // スフィアマップ加算合成フラグ
 #define SKII2    8000
 
 // オブジェクトのテクスチャ
+
 #ifndef AnimatedTexture
-texture ObjectTexture: MATERIALTEXTURE;
-sampler ObjTexSampler = sampler_state {
-    texture = <ObjectTexture>;
-    MINFILTER = ANISOTROPIC;
-	MAGFILTER = ANISOTROPIC;
-	MIPFILTER = ANISOTROPIC;
-	ADDRESSU  = WRAP;
-	ADDRESSV  = WRAP;
-	MAXANISOTROPY = 16;
-};
+
+	texture ObjectTexture: MATERIALTEXTURE;
+	
+#else
+
+	texture ObjectTexture: ANIMATEDTEXTURE 
+	<
+		string ResourceName = AnimatedTexture;
+	>;
+	
 #endif
 
-#ifdef AnimatedTexture
-texture ObjectTexture: ANIMATEDTEXTURE 
-<
-	string ResourceName = AnimatedTexture;
->;
 sampler ObjTexSampler = sampler_state {
     texture = <ObjectTexture>;
     MINFILTER = ANISOTROPIC;
@@ -76,7 +72,6 @@ sampler ObjTexSampler = sampler_state {
 	ADDRESSV  = WRAP;
 	MAXANISOTROPY = 16;
 };
-#endif
 
 // スフィアマップのテクスチャ
 texture ObjectSphereMap: MATERIALSPHEREMAP;
@@ -103,11 +98,23 @@ sampler ObjToonSampler = sampler_state {
 };
 
 #ifdef NormalMapTexture
-//Normal Map
-texture2D NormalMap <
-	string ResourceName = NormalMapTexture;
-	int MipLevels = 0;
->;
+
+#if NormalMap_Animated == 0
+
+	texture2D NormalMap <
+		string ResourceName = NormalMapTexture;
+		int MipLevels = 0;
+	>;
+	
+#else
+
+	texture2D NormalMap: ANIMATEDTEXTURE <
+		string ResourceName = NormalMapTexture;
+		int MipLevels = 0;
+	>;
+	
+#endif
+
 sampler2D NormalMapSamp = sampler_state {
 	texture = <NormalMap>;
 	MINFILTER = ANISOTROPIC;
@@ -135,11 +142,23 @@ float3x3 compute_tangent_frame(float3 Normal, float3 View, float2 UV)
 #endif
 
 #ifdef SpecularMapTexture
-//Specular Map
-texture2D SpecularMap <
-	string ResourceName = SpecularMapTexture;
-	int MipLevels = 0;
->;
+
+#if SpecularMap_Animated == 0
+
+	texture2D SpecularMap <
+		string ResourceName = SpecularMapTexture;
+		int MipLevels = 0;
+	>;
+
+#else
+
+	texture2D SpecularMap : ANIMATEDTEXTURE <
+		string ResourceName = SpecularMapTexture;
+		int MipLevels = 0;
+	>;
+	
+#endif
+
 sampler2D SpecularMapSamp = sampler_state {
 	texture = <SpecularMap>;
 	MINFILTER = ANISOTROPIC;
@@ -457,14 +476,7 @@ float4 Basic_PS(VS_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap
 	
 	#if ALPHATEST == 1
 		
-			if (Color.a >= AlphaThreshold)
-				{
-					Color.a = 1;
-				}
-			else
-				{
-					Color.a = 0;
-				}
+			Color.a = ( Color.a >= Alpha_Threshold ) ? 1 : 0;
 				
 	#endif
     
@@ -648,13 +660,17 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	//////////////////////Normal Map related values//////////////////////////////////////
 	#ifdef NormalMapTexture
 		
-		float4 NormalColor = tex2D( NormalMapSamp, Tex) * 2;
+		float4 NormalColor;
+		NormalColor.xyz = tex2D(NormalMapSamp,Tex).rgb*2;
+		NormalColor.a = 1;
+		
+		NormalColor.xyz = lerp(float3(0.5,0.5,1)*2,NormalColor.xyz,NormalMap_Intensity);
+		
+		//NormalColor.xy *= NormalMap_Intensity;
 		
 		float3 NormalDirection = normalize(IN.Normal);
 		float3 V = normalize(IN.Eye);
-			
-		NormalColor = NormalColor.rgba;
-		NormalColor.a = 1;
+		
 		float3x3 tangentFrame = compute_tangent_frame(NormalDirection, V, Tex);
 		NormalDirection = normalize(mul(NormalColor - 1.0f, tangentFrame));
 	
@@ -902,14 +918,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	
 		#if ALPHATEST == 1
 		
-			if (Color.a >= AlphaThreshold)
-				{
-					Color.a = 1;
-				}
-			else
-				{
-					Color.a = 0;
-				}
+			Color.a = ( Color.a >= Alpha_Threshold ) ? 1 : 0;
 				
 		#endif
 	
@@ -1008,19 +1017,12 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		
 		#if ALPHATEST == 1
 		
-			if (ans.a >= AlphaThreshold)
-				{
-					ans.a = 1;
-				}
-			else
-				{
-					ans.a = 0;
-				}
+			ans.a = ( ans.a >= Alpha_Threshold ) ? 1 : 0;
 				
 		#endif
 		
         if( transp ) ans.a = 0.5f;
-		
+		//ans.rgb=NormalColor.rgb;
         return ans;
     }
 }

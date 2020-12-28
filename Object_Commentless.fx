@@ -12,10 +12,15 @@
 	#define Spa_CubeMap_Use_NormalMap 1
 	#define SpecularLight_Use_NormalMap 1
 	
+	#define NormalMap_Intensity 1
+	#define NormalMap_Animated 0
+	
 //#define SpecularMapTexture  "noneS.png"
 
 	#define Spa_CubeMap_Use_SpecularMap 1
 	#define SpecularLight_Use_SpecularMap 1
+	
+	#define SpecularMap_Animated 0
 
 //#define CubeMapTexture "cubemap.dds"
 
@@ -117,7 +122,7 @@ float3 Rim_Color = float3(1,1,1);
 
 #define ALPHATEST 0
 
-#define AlphaThreshold 0.5 //Scale: 0-1
+#define Alpha_Threshold 0.5 //Scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
