@@ -2,9 +2,9 @@
 
 //Custom settings per object (Apply this fx to the object)
 
-//When I don't explain what's the meaning of 0 and 1 does in a define line, you can understand it as:
-	// 0 : Disabled
-	// 1 : Enabled
+//The #define lines either take 0 (disabled) or 1 (enabled) as the value, or a texture's name
+
+//The float lines can take any decimal number, but not all of them will produce nice visual
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,7 @@
 	#define Spa_CubeMap_Use_NormalMap 1
 	#define SpecularLight_Use_NormalMap 1
 	
-	#define NormalMap_Intensity 1
+	float NormalMap_Intensity = 1;
 	#define NormalMap_Animated 0
 	
 //#define SpecularMapTexture  ".png" //Specular Map (Optional, delete the double slash at the beginning of the line to enable it)
@@ -24,27 +24,28 @@
 	#define Spa_CubeMap_Use_SpecularMap 1
 	#define SpecularLight_Use_SpecularMap 1
 	
+	float SpecularMap_Saturation = 1;
 	#define SpecularMap_Animated 0
 
-//#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
+#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //See custom_basic.png for details, leave these things alone if you want to keep the same setting as MMD's default shader
 
-#define Toon_Intensity 1 //Should only be set somewhere from 0 to 1, out of that range will cause visual problems
-#define Toon_Brightness 1
-#define Toon_Gradient 3 //MMD default is 3
+float Toon_Intensity = 1; //Should only be set somewhere from 0 to 1, out of that range will cause visual problems
+float Toon_Brightness = 1;
+float Toon_Gradient = 3; //MMD default is 3
 
-#define Spa_CubeMap_Intensity 1
-#define Spa_CubeMap_Saturation 1
+float Spa_CubeMap_Intensity = 1;
+float Spa_CubeMap_Saturation = 1;
 #define CubeMap_Affected_By_LightDirection 0 //1 is enabled, 0 is disabled
 
-#define SpecularLight_Intensity 1
-#define SpecularLight_Focus 50 //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
+float SpecularLight_Intensity = 1;
+float SpecularLight_Focus = 50; //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
 #define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
 
-#define Spa_CubeMap_SpecularLight_Tint 1 //Should be set from 0 to 1. 1 will give the tinted shine as vanilla MMD, 0 will give a dull, untinted shine, values between 0 and 1 are the blends of the two
+float Spa_CubeMap_SpecularLight_Tint = 1; //Should be set from 0 to 1. 1 will give the tinted shine as vanilla MMD, 0 will give a dull, untinted shine, values between 0 and 1 are the blends of the two
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,10 +54,10 @@
 
 float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
-	#define Rim_Intensity 0 //Set it 0 to disable rim lighting completely
-	#define Rim_Gradient 3
+	float Rim_Intensity = 0; //Set it 0 to disable rim lighting completely
+	float Rim_Gradient = 3;
 		
-	//#define Rim_Shadow_Area_Intensity 0.5 //Add double slash at the beginning of the line to auto-caculate the value
+	//float Rim_Shadow_Area_Intensity = 0.5; //Add double slash at the beginning of the line to auto-caculate the value
 		
 	#define Rim_Use_NormalMap 1 //Apply for the subsurface rim glow too, since they are basically the same thing
 	#define Rim_Use_SpecularMap 1
@@ -67,17 +68,17 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
 #define SUBSURFACETOON 0 //Enable or disable subsurface toon, can be use as fake subsurface scattering, might take a while to get a decent result
 
-	float3 Subsurface_Toon_Color = float3(1,0,0); //RGB value, scale: 0-1
+	float3 Subsurface_Color = float3(1,0,0); //RGB value, scale: 0-1
 	
 	//#define ThicknessMapTexture "thickness.png" //Thickness Map (Optional, delete the double slash at the beginning of the line to enable it), it should be the AO map generated from Metaseq, Blender,...
 
-	#define Subsurface_Toon_Intensity 0.5
-	#define Subsurface_Toon_Gradient 2.5 //Should be around 85% - 125% of the Toon_Gradient's value, but feel free to try any number
+	float Subsurface_Toon_Intensity = 0.5;
+	float Subsurface_Toon_Gradient = 2.5; //Should be around 85% - 125% of the Toon_Gradient's value, but feel free to try any number
 	
-	#define Subsurface_Rim_Glow_Intensity 0.25
-	#define Subsurface_Rim_Glow_Gradient 0.75
+	float Subsurface_Rim_Intensity = 0.25;
+	float Subsurface_Rim_Gradient = 0.75;
 	
-	//#define Subsurface_Rim_Glow_Shadow_Area_Intensity 0.5 //Add double slash at the beginning of the line to auto-caculate the value
+	//float Subsurface_Rim_Shadow_Area_Intensity = 0.5; //Add double slash at the beginning of the line to auto-caculate the value
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,13 +86,13 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
 	//#define HeightMapTexture "height.png" //The whiter, the higher (Optional when you disable parallax, delete the double slash at the beginning of the line to enable it)
 	
-	#define Parallax_Scale 0.1 //Equal to parallaxMapScale in RayCast
+	float Parallax_Scale = 0.1; //Equal to parallaxMapScale in RayCast
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VERTEXCOLOR 0 //Enable or disable vertex color, model will turn black (or has messed up color) if it don't have vertex color (or if you choose the wrong AddUV )
 
-	#define Vertex_Color_Intensity 1 // Setting it 0 does the same thing as disabling vertex color, except the transparency will still be affected, the higher/lower the value is, the more/less visible the vertex color is
+	float Vertex_Color_Intensity = 1; // Setting it 0 does the same thing as disabling vertex color, except the transparency will still be affected, the higher/lower the value is, the more/less visible the vertex color is
 
 	#define Vertex_Color_Stored_At TEXCOORD2 //Don't leave this empty, even if you disable vertex color
 	//AddUV1 = TEXCOORD1
@@ -135,16 +136,8 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 #define ALPHATEST 0
 //Should be enabled for objects have complex texture transparency like trees, some certain models' hair,... that MMD might have trouble rendering/ Or for you lazy-ass don't bother to re-order things like Miku's lace,...)
 
-	#define Alpha_Threshold 0.5 //Scale: 0-1
+	float Alpha_Threshold = 0.5; //Scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if SOFTSHADOW == 0
-	#include "MES40.fxsub"
-#elif SOFTSHADOW == 1
-	#include "MES40 SimpleSoftShadow.fxsub"
-#elif SOFTSHADOW == 2
-	#include "MES40 ExcellentShadow.fxsub"
-#elif SOFTSHADOW == 3
-	#include "MES40 RotatedPoissonShadow.fxsub"
-#endif
+#include "MES40 Sync.fxsub"

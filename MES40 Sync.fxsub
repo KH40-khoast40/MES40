@@ -1,0 +1,129 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool Controller : CONTROLOBJECT < string name = "MES40 Controller.pmd"; >;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float Normal_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Normals"; >;
+float NormalMap_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Normal Maps"; >;
+float SpecularMap_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Specular Maps"; >;
+float SubMap_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Sub Maps"; >;
+float VertexColor_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Vertex Color"; >;
+float ToonShadow_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Toons + Shadows"; >;
+float AlphaDisabled_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Alpha Disabled"; >;
+float UV_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "UV"; >;
+float SubMapUV_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "SubMap UV"; >;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float Toon_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "t_Intensity +"; >;
+float Toon_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "t_Intensity -"; >;
+static float Toon_Intensity_F = Toon_Intensity + Toon_Intensity_P - Toon_Intensity_M; 
+	
+float Toon_Brightness_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "t_Brightness +"; >;
+float Toon_Brightness_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "t_Brightness -"; >;
+static float Toon_Brightness_F = Toon_Brightness + Toon_Brightness_P - Toon_Brightness_M; 
+	
+float Toon_Gradient_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "t_Gradient +"; >;
+float Toon_Gradient_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "t_Gradient -"; >;
+static float Toon_Gradient_F = Toon_Gradient + Toon_Gradient_P*100 - Toon_Gradient_M*5; 
+	
+float Spa_CubeMap_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_Intensity +"; >;
+float Spa_CubeMap_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_Intensity -"; >;
+static float Spa_CubeMap_Intensity_F = Spa_CubeMap_Intensity + Spa_CubeMap_Intensity_P - Spa_CubeMap_Intensity_M; 
+	
+float Spa_CubeMap_Saturation_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_Saturation +"; >;
+float Spa_CubeMap_Saturation_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_Saturation -"; >;
+static float Spa_CubeMap_Saturation_F = Spa_CubeMap_Saturation + Spa_CubeMap_Saturation_P*10 - Spa_CubeMap_Saturation_M;  
+	
+float SpecularLight_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Intensity +"; >;
+float SpecularLight_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Intensity -"; >;
+static float SpecularLight_Intensity_F = SpecularLight_Intensity + SpecularLight_Intensity_P - SpecularLight_Intensity_M;  
+	
+float SpecularLight_Focus_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Focus +"; >;
+float SpecularLight_Focus_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Focus -"; >;
+static float SpecularLight_Focus_F = SpecularLight_Focus + SpecularLight_Focus_P*1000 - SpecularLight_Focus_M*100;  
+	
+float Spa_CubeMap_SpecularLight_Tint_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_sl_Tint +"; >;
+float Spa_CubeMap_SpecularLight_Tint_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_sl_Tint -"; >;
+static float Spa_CubeMap_SpecularLight_Tint_F = Spa_CubeMap_SpecularLight_Tint + Spa_CubeMap_SpecularLight_Tint_P - Spa_CubeMap_SpecularLight_Tint_M;
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+float NormalMap_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "nm_Intensity +"; >;
+float NormalMap_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "nm_Intensity -"; >;
+static float NormalMap_Intensity_F = NormalMap_Intensity + NormalMap_Intensity_P*10 - NormalMap_Intensity_M;
+
+float SpecularMap_Saturation_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sm_Saturation +"; >;
+float SpecularMap_Saturation_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sm_Saturation -"; >;
+static float SpecularMap_Saturation_F = SpecularMap_Saturation + SpecularMap_Saturation_P*10 - SpecularMap_Saturation_M;
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+float Rim_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Intensity +"; >;
+float Rim_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Intensity -"; >;
+static float Rim_Intensity_F = Rim_Intensity + Rim_Intensity_P - Rim_Intensity_M;
+
+float Rim_Gradient_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Gradient +"; >;
+float Rim_Gradient_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Gradient -"; >;
+static float Rim_Gradient_F = Rim_Gradient + Rim_Gradient_P*50 - Rim_Gradient_M*5; 
+
+float Rim_Color_R_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Color_R +"; >;
+float Rim_Color_R_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Color_R -"; >;
+static float Rim_Color_R_F = Rim_Color.r + Rim_Color_R_P - Rim_Color_R_M; 
+
+float Rim_Color_G_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Color_G +"; >;
+float Rim_Color_G_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Color_G -"; >;
+static float Rim_Color_G_F = Rim_Color.g + Rim_Color_G_P - Rim_Color_G_M; 
+
+float Rim_Color_B_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Color_B +"; >;
+float Rim_Color_B_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "rim_Color_B -"; >;
+static float Rim_Color_B_F = Rim_Color.b + Rim_Color_B_P - Rim_Color_B_M; 
+
+float Vertex_Color_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "vcolor_Intensity +"; >;
+float Vertex_Color_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "vcolor_Intensity -"; >;
+static float Vertex_Color_Intensity_F = Vertex_Color_Intensity + Vertex_Color_Intensity_P - Vertex_Color_Intensity_M;
+
+float Parallax_Scale_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "parallax_Scale +"; >;
+float Parallax_Scale_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "parallax_Scale -"; >;
+static float Parallax_Scale_F = Parallax_Scale + Parallax_Scale_P - Parallax_Scale_M;
+
+float Subsurface_Toon_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_t_Intensity +"; >;
+float Subsurface_Toon_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_t_Intensity -"; >;
+static float Subsurface_Toon_Intensity_F = Subsurface_Toon_Intensity + Subsurface_Toon_Intensity_P - Subsurface_Toon_Intensity_M;
+
+float Subsurface_Toon_Gradient_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_t_Gradient +"; >;
+float Subsurface_Toon_Gradient_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_t_Gradient -"; >;
+static float Subsurface_Toon_Gradient_F = Subsurface_Toon_Gradient + Subsurface_Toon_Gradient_P*100 - Subsurface_Toon_Gradient_M*5; 
+
+float Subsurface_Rim_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_rim_Intensity +"; >;
+float Subsurface_Rim_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_rim_Intensity -"; >;
+static float Subsurface_Rim_Intensity_F = Subsurface_Rim_Intensity + Subsurface_Rim_Intensity_P - Subsurface_Rim_Intensity_M;
+
+float Subsurface_Rim_Gradient_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_rim_Gradient +"; >;
+float Subsurface_Rim_Gradient_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_rim_Gradient -"; >;
+static float Subsurface_Rim_Gradient_F = Subsurface_Rim_Gradient + Subsurface_Rim_Gradient_P*50 - Subsurface_Rim_Gradient_M*5;
+
+float Subsurface_Color_R_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_R +"; >;
+float Subsurface_Color_R_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_R -"; >;
+static float Subsurface_Color_R_F = Subsurface_Color.r + Subsurface_Color_R_P - Subsurface_Color_R_M;
+
+float Subsurface_Color_G_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_G +"; >;
+float Subsurface_Color_G_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_G -"; >;
+static float Subsurface_Color_G_F = Subsurface_Color.g + Subsurface_Color_G_P - Subsurface_Color_G_M; 
+
+float Subsurface_Color_B_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_B +"; >;
+float Subsurface_Color_B_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_B -"; >;
+static float Subsurface_Color_B_F = Subsurface_Color.b + Subsurface_Color_B_P - Subsurface_Color_B_M; 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#if SOFTSHADOW == 0
+	#include "MES40.fxsub"
+#elif SOFTSHADOW == 1
+	#include "MES40 SimpleSoftShadow.fxsub"
+#elif SOFTSHADOW == 2
+	#include "MES40 ExcellentShadow.fxsub"
+#elif SOFTSHADOW == 3
+	#include "MES40 RotatedPoissonShadow.fxsub"
+#endif

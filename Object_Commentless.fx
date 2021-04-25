@@ -1,53 +1,59 @@
 //Customizable settings for MES40
 
+//The #define lines either take 0 (disabled) or 1 (enabled) as the value, or a texture's name
+
+//The float lines can take any decimal number, but not all of them will produce nice visual
+
 //I have to shut up
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#define AnimatedTexture "animated.gif"
 
-//#define NormalMapTexture  "noneN.png"
+//#define NormalMapTexture  ".png"
 
 	#define Toon_Use_NormalMap 1
 	#define Spa_CubeMap_Use_NormalMap 1
 	#define SpecularLight_Use_NormalMap 1
 	
-	#define NormalMap_Intensity 1
+	float NormalMap_Intensity = 1;
 	#define NormalMap_Animated 0
 	
-//#define SpecularMapTexture  "noneS.png"
+//#define SpecularMapTexture  ".png"
 
 	#define Spa_CubeMap_Use_SpecularMap 1
 	#define SpecularLight_Use_SpecularMap 1
 	
+	float SpecularMap_Saturation = 1;
 	#define SpecularMap_Animated 0
 
 //#define CubeMapTexture "cubemap.dds"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define Toon_Intensity 1
-#define Toon_Brightness 1
-#define Toon_Gradient 3
+float Toon_Intensity = 1;
+float Toon_Brightness = 1;
+float Toon_Gradient = 3;
 
-#define Spa_CubeMap_Intensity 1
-#define Spa_CubeMap_Saturation 1
+float Spa_CubeMap_Intensity = 1;
+float Spa_CubeMap_Saturation = 1;
 #define CubeMap_Affected_By_LightDirection 0
 
-#define SpecularLight_Intensity 1
-#define SpecularLight_Focus 50
+float SpecularLight_Intensity = 1;
+float SpecularLight_Focus = 50;
 #define SpecularLight_Affected_By_LightDirection 1
 
-#define Spa_CubeMap_SpecularLight_Tint 1
+float Spa_CubeMap_SpecularLight_Tint = 1;
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 float3 Rim_Color = float3(1,1,1);
 
-	#define Rim_Intensity 0
-	#define Rim_Gradient 3
+	float Rim_Intensity = 0;
+	float Rim_Gradient = 3;
 		
-	//#define Rim_Shadow_Area_Intensity 0.5
+	//float Rim_Shadow_Area_Intensity = 0.5;
 		
 	#define Rim_Use_NormalMap 1
 	#define Rim_Use_SpecularMap 1
@@ -56,17 +62,17 @@ float3 Rim_Color = float3(1,1,1);
 
 #define SUBSURFACETOON 0
 
-	float3 Subsurface_Toon_Color = float3(1,0,0);
+	float3 Subsurface_Color = float3(1,0,0);
 	
-	//#define ThicknessMapTexture ""
+	//#define ThicknessMapTexture "thickness.png"
 
-	#define Subsurface_Toon_Intensity 0.5
-	#define Subsurface_Toon_Gradient 2.5
+	float Subsurface_Toon_Intensity = 0.5;
+	float Subsurface_Toon_Gradient = 2.5;
 	
-	#define Subsurface_Rim_Glow_Intensity 0.25
-	#define Subsurface_Rim_Glow_Gradient 0.75
+	float Subsurface_Rim_Intensity = 0.25;
+	float Subsurface_Rim_Gradient = 0.75;
 	
-	//#define Subsurface_Rim_Glow_Shadow_Area_Intensity 0.5
+	//float Subsurface_Rim_Shadow_Area_Intensity = 0.5;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,13 +80,13 @@ float3 Rim_Color = float3(1,1,1);
 
 	//#define HeightMapTexture "height.png"
 	
-	#define Parallax_Scale 0.1
+	float Parallax_Scale = 0.1;
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VERTEXCOLOR 0
 
-	#define Vertex_Color_Intensity 1
+	float Vertex_Color_Intensity = 1;
 
 	#define Vertex_Color_Stored_At TEXCOORD2
 	//AddUV1 = TEXCOORD1
@@ -122,16 +128,8 @@ float3 Rim_Color = float3(1,1,1);
 
 #define ALPHATEST 0
 
-#define Alpha_Threshold 0.5 //Scale: 0-1
+	float Alpha_Threshold = 0.5; //Scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if SOFTSHADOW == 0
-	#include "MES40.fxsub"
-#elif SOFTSHADOW == 1
-	#include "MES40 SimpleSoftShadow.fxsub"
-#elif SOFTSHADOW == 2
-	#include "MES40 ExcellentShadow.fxsub"
-#elif SOFTSHADOW == 3
-	#include "MES40 RotatedPoissonShadow.fxsub"
-#endif
+#include "MES40 Sync.fxsub"

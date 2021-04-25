@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 1.41 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 2.0 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -642,7 +642,46 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 
 // ピクセルシェーダ
 float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon) : COLOR
-{
+{	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+		if (Controller)
+		{
+			Toon_Intensity = Toon_Intensity_F;
+			Toon_Brightness = Toon_Brightness_F;
+			Toon_Gradient = Toon_Gradient_F;
+			
+			Spa_CubeMap_Intensity = Spa_CubeMap_Intensity_F;
+			Spa_CubeMap_Saturation = Spa_CubeMap_Saturation_F;
+			
+			SpecularLight_Intensity = SpecularLight_Intensity_F;
+			SpecularLight_Focus = SpecularLight_Focus_F;
+			
+			Spa_CubeMap_SpecularLight_Tint = Spa_CubeMap_SpecularLight_Tint_F;
+			
+			////////////////////////////////////////////////////////////////////
+			
+			NormalMap_Intensity = NormalMap_Intensity_F;
+			
+			SpecularMap_Saturation = SpecularMap_Saturation_F;
+			
+			////////////////////////////////////////////////////////////////////
+			
+			Rim_Intensity = Rim_Intensity_F;
+			Rim_Gradient = Rim_Gradient_F;
+			Rim_Color = float3(Rim_Color_R_F,Rim_Color_G_F,Rim_Color_B_F);
+			
+			Vertex_Color_Intensity = Vertex_Color_Intensity_F;
+			
+			Parallax_Scale = Parallax_Scale_F;
+			
+			Subsurface_Toon_Intensity = Subsurface_Toon_Intensity_F;
+			Subsurface_Toon_Gradient = Subsurface_Toon_Gradient_F;
+			Subsurface_Rim_Intensity = Subsurface_Rim_Intensity_F;
+			Subsurface_Rim_Gradient = Subsurface_Rim_Gradient_F;
+			Subsurface_Color = float3(Subsurface_Color_R_F,Subsurface_Color_G_F,Subsurface_Color_B_F);
+		}
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	float2 Tex = IN.TexUVs.xy;
 	float2 SubMapUV = IN.TexUVs.zw;
 	
@@ -684,6 +723,9 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	//////////////////////Specular Map related values//////////////////////////////////////
 	#ifdef SpecularMapTexture
 	float4 SpecularLevel = tex2D(SpecularMapSamp, Tex);
+	float SpecularLevelMonoCalculate = (SpecularLevel.r+SpecularLevel.g+SpecularLevel.b)/3;
+	float3 SpecularLevelMono = float3(SpecularLevelMonoCalculate,SpecularLevelMonoCalculate,SpecularLevelMonoCalculate);
+	SpecularLevel.rgb = lerp(SpecularLevelMono,SpecularLevel.rgb,SpecularMap_Saturation);
 	
 	#else
 	float4 SpecularLevel = float4(1,1,1,1);
@@ -732,8 +774,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
         // スフィアマップ適用
         float4 TexColor = tex2D(ObjSphareSampler,IN.SpTex);
 		
-		float TexColorMonoCaculate = (TexColor.r+TexColor.g+TexColor.b)/3;
-		float4 TexColorMono = float4(TexColorMonoCaculate,TexColorMonoCaculate,TexColorMonoCaculate,TexColor.a);
+		float TexColorMonoCalculate = (TexColor.r+TexColor.g+TexColor.b)/3;
+		float4 TexColorMono = float4(TexColorMonoCalculate,TexColorMonoCalculate,TexColorMonoCalculate,TexColor.a);
 		
 		TexColor = lerp(TexColorMono, TexColor, TexColor.a * Spa_CubeMap_Saturation);
 		
@@ -821,8 +863,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	
 	/////////////////////////////////////////////////////////////////////////////////////
 	
-	float CubeEnvMonoCaculate = (CubeEnv.r+CubeEnv.g+CubeEnv.b)/3;
-	float4 CubeEnvMono = float4(CubeEnvMonoCaculate,CubeEnvMonoCaculate,CubeEnvMonoCaculate,CubeEnv.a);
+	float CubeEnvMonoCalculate = (CubeEnv.r+CubeEnv.g+CubeEnv.b)/3;
+	float4 CubeEnvMono = float4(CubeEnvMonoCalculate,CubeEnvMonoCalculate,CubeEnvMonoCalculate,CubeEnv.a);
 	
 	CubeEnv = lerp(CubeEnvMono, CubeEnv, CubeEnv.a * Spa_CubeMap_Saturation);
 	
@@ -907,6 +949,24 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	#endif
 	
 	#endif
+	
+	#if Rim_Use_NormalMap == 1
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), NormalDirection)* Rim_Gradient);
+	#else
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Rim_Gradient);
+	#endif
+		
+	#if Rim_Use_SpecularMap == 1
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * SpecularLevel * Rim_Intensity ;
+	#else
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Intensity ;
+	#endif
+		
+	#ifdef Rim_Shadow_Area_Intensity
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
+	#else
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
+	#endif
     
     // テクスチャ座標に変換
     IN.ZCalcTex /= IN.ZCalcTex.w;
@@ -921,6 +981,41 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 			Color.a = ( Color.a >= Alpha_Threshold ) ? 1 : 0;
 				
 		#endif
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+		if (Controller)
+		{
+			#ifdef NormalMapTexture
+				Color.rgb = lerp( Color.rgb , NormalDirection , Normal_view );
+				Color.rgb = lerp( Color.rgb , tex2D(NormalMapSamp,Tex) , NormalMap_view );
+			#else
+				Color.rgb = lerp( Color.rgb , IN.Normal , Normal_view );
+				Color.rgb = lerp( Color.rgb , 0 , NormalMap_view );
+			#endif
+			
+			#ifdef SpecularMapTexture
+				Color.rgb = lerp( Color.rgb , tex2D(SpecularMapSamp,Tex) , SpecularMap_view );
+			#else
+				Color.rgb = lerp( Color.rgb , 1 , SpecularMap_view );
+			#endif
+			
+			#ifdef SubMapTexture
+				Color.rgb = lerp( Color.rgb , tex2D(SubMapSamp,SubMapUV) , SubMap_view );
+			#else
+				Color.rgb = lerp( Color.rgb , 0 , SubMap_view );
+			#endif
+			
+			Color = lerp( Color , VertexColor , VertexColor_view );
+			
+			Color.rgb = lerp( Color.rgb , 1 , ToonShadow_view );
+			
+			Color.a = lerp( Color.a , 1 , AlphaDisabled_view );
+			
+			Color.rgb = lerp(Color.rgb , float3(Tex,0) , UV_view );
+			
+			Color.rgb = lerp(Color.rgb , float3(SubMapUV,0) , SubMapUV_view );
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////////
 	
         // シャドウバッファ外
         return Color;
@@ -965,38 +1060,19 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		float4 Thickness = tex2D( ThicknessMapSamp , Tex );
 		#endif
 		
-		float rimSSS = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Subsurface_Rim_Glow_Gradient);
-		compSSS -= rimSSS * Subsurface_Rim_Glow_Intensity;
+		float rimSSS = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Subsurface_Rim_Gradient);
+		compSSS -= rimSSS * Subsurface_Rim_Intensity;
 		
-		#ifdef Subsurface_Rim_Glow_Shadow_Area_Intensity
-		comp += rimSSS * Subsurface_Rim_Glow_Shadow_Area_Intensity * Subsurface_Rim_Glow_Intensity;
+		#ifdef Subsurface_Rim_Shadow_Area_Intensity
+		comp += rimSSS * Subsurface_Rim_Shadow_Area_Intensity * Subsurface_Rim_Intensity;
 		#endif
 		
-		#ifndef Subsurface_Rim_Glow_Shadow_Area_Intensity
-		comp += rimSSS * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Subsurface_Rim_Glow_Intensity;
+		#ifndef Subsurface_Rim_Shadow_Area_Intensity
+		comp += rimSSS * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Subsurface_Rim_Intensity;
 		#endif
         
-		Color.rgb = lerp(Color.rgb, ( Color.rgb * Subsurface_Toon_Color * (Subsurface_Toon_Color+1) ) ,(1-compSSS)* Subsurface_Toon_Intensity);
+		Color.rgb = lerp(Color.rgb, ( Color.rgb * Subsurface_Color * (Subsurface_Color+1) ) ,(1-compSSS)* Subsurface_Toon_Intensity);
 		
-		#endif
-		
-		
-		#if Rim_Use_NormalMap == 1
-		float rim = 1.0 - saturate(dot(normalize(IN.Eye), NormalDirection)* Rim_Gradient);
-		#else
-		float rim = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Rim_Gradient);
-		#endif
-		
-		#if Rim_Use_SpecularMap == 1
-		Color.rgb += float3(rim,rim,rim) * Rim_Color * SpecularLevel * Rim_Intensity ;
-		#else
-		Color.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Intensity ;
-		#endif
-		
-		#ifdef Rim_Shadow_Area_Intensity
-		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
-		#else
-		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
 		#endif
 		
 		
@@ -1022,7 +1098,43 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		#endif
 		
         if( transp ) ans.a = 0.5f;
-		//ans.rgb=NormalColor.rgb;
+		
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+		if (Controller)
+		{
+			#ifdef NormalMapTexture
+				ans.rgb = lerp( ans.rgb , NormalDirection , Normal_view );
+				ans.rgb = lerp( ans.rgb , tex2D(NormalMapSamp,Tex) , NormalMap_view );
+			#else
+				ans.rgb = lerp( ans.rgb , IN.Normal , Normal_view );
+				ans.rgb = lerp( ans.rgb , 0 , NormalMap_view );
+			#endif
+			
+			#ifdef SpecularMapTexture
+				ans.rgb = lerp( ans.rgb , tex2D(SpecularMapSamp,Tex) , SpecularMap_view );
+			#else
+				ans.rgb = lerp( ans.rgb , 1 , SpecularMap_view );
+			#endif
+			
+			#ifdef SubMapTexture
+				ans.rgb = lerp( ans.rgb , tex2D(SubMapSamp,SubMapUV) , SubMap_view );
+			#else
+				ans.rgb = lerp( ans.rgb , 0 , SubMap_view );
+			#endif
+			
+			ans = lerp( ans , VertexColor , VertexColor_view );
+			
+			ans.rgb = lerp( ans.rgb , comp , ToonShadow_view );
+			
+			ans.a = lerp( ans.a , 1 , AlphaDisabled_view );
+			
+			ans.rgb = lerp(ans.rgb , float3(Tex,0) , UV_view );
+			
+			ans.rgb = lerp(ans.rgb , float3(SubMapUV,0) , SubMapUV_view );
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+		
         return ans;
     }
 }

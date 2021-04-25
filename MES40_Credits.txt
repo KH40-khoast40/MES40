@@ -12,7 +12,6 @@ Sub map support 			: KH40
 Alpha test support 			: KH40
 SimpleSoftShadow 			: ビームマンP
 ExcellentShadow 			: そぼろ
-RotatedPoissonShadow			: https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 Mixing shaders 				: KH40
 Special thanks 				: FlyingSpirits-P, Minmode
 
