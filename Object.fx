@@ -27,7 +27,7 @@
 	float SpecularMap_Saturation = 1;
 	#define SpecularMap_Animated 0
 
-#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
+//#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

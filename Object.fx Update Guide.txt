@@ -1,4 +1,4 @@
 
-Ver 1.41 -> Ver 2.0
+Ver 2.0 -> Ver 2.1
 
-Big update, do the whole thing again, I'm too lazy to list the changes lul, or stay at 1.41 all you like.
+Nothing in the Object.fx changed, but the settings you've made with MES40 Controller.pmd in ver 2.0 might not produce the exact same visual now in ver 2.1
