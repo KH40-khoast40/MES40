@@ -8,6 +8,16 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//NOTICE: If you use the ExcellentShadow version of the shader, then ignore this section. Go to the "ExcellentShadowObject.fxsub" in the "ExcellentShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "ScreenShadowMap" tab
+
+#define CUSTOM_FOV 0 //Can serve as decimal FOV, and/or to apply the FOV of ripped Diva camera automatically
+
+	#define Custom_Fov_Model "MES40 Controller.pmd"
+	#define Custom_Fov_Bone "fov"
+	#define Custom_Fov_Axis 1 // 1=x | 2=y | 3=z ; Determine which direction of the bone controls the FOV value
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //#define AnimatedTexture "animated.gif" //GIF or APNG (Optional, delete the double slash at the beginning of the line to enable it)
 
 //#define NormalMapTexture  ".png" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
@@ -124,7 +134,6 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 //0: MMD's Standard Shadow
 //1: Beamman's SimpleSoftShadow
 //2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)
-//3: Rotated Poisson Shadow (Edited SimpleSoftShadow) (Some settings are in the fxsub)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -8,6 +8,16 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//NOTICE: If you use the ExcellentShadow version of the shader, then ignore this section. Go to the "ExcellentShadowObject.fxsub" in the "ExcellentShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "ScreenShadowMap" tab
+
+#define CUSTOM_FOV 0
+
+	#define Custom_Fov_Model "MES40 Controller.pmd"
+	#define Custom_Fov_Bone "fov"
+	#define Custom_Fov_Axis 1 // 1=x | 2=y | 3=z
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //#define AnimatedTexture "animated.gif"
 
 //#define NormalMapTexture  ".png"

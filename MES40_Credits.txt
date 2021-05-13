@@ -12,6 +12,7 @@ Sub map support 			: KH40
 Alpha test support 			: KH40
 SimpleSoftShadow 			: ビームマンP
 ExcellentShadow 			: そぼろ
+Custom FOV support                      : banitron
 Mixing shaders 				: KH40
 Special thanks 				: FlyingSpirits-P, Minmode
 
@@ -25,5 +26,6 @@ LessThanEqual	: https://twitter.com/lessthanequal
 ビームマンP	: https://w.atwiki.jp/beamman
 Rui (Ray-cast)  : https://twitter.com/Rui_cg || https://github.com/ray-cast/ray-mmd
 そぼろ		: https://www.nicovideo.jp/mylist/17392230
+banitron        : https://www.deviantart.com/banitron
 FlyingSpirits-P	: https://www.fs-pblog.com/
 Minmode		: https://www.deviantart.com/minmode

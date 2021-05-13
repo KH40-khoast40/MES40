@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 2.1 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 2.2 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -11,6 +11,7 @@
 float4x4 WorldViewProjMatrix      : WORLDVIEWPROJECTION;
 float4x4 WorldMatrix              : WORLD;
 float4x4 ViewMatrix               : VIEW;
+float4x4 ProjMatrix               : PROJECTION;
 float4x4 WorldViewMatrix          : WORLDVIEW;
 float4x4 LightWorldViewProjMatrix : WORLDVIEWPROJECTION < string Object = "Light"; >;
 
@@ -47,6 +48,39 @@ bool     transp;   // 半透明フラグ
 bool	 spadd;    // スフィアマップ加算合成フラグ
 #define SKII1    1500
 #define SKII2    8000
+
+float2 ViewportSize : VIEWPORTPIXELSIZE;
+static float ViewportAspect = ViewportSize.x / ViewportSize.y;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// FOV Injection Method
+
+float4x4 WorldViewProjMatrix_Final()
+{
+	#if CUSTOM_FOV == 0
+		return WorldViewProjMatrix;
+	#else
+		float4x4 projMatrixFovInjected = ProjMatrix;
+		
+		float valueFov;
+		
+		#if Custom_Fov_Axis == 1
+			valueFov = Custom_Fov.x;
+		#elif Custom_Fov_Axis == 2
+			valueFov = Custom_Fov.y;
+		#else
+			valueFov = Custom_Fov.z;
+		#endif
+		
+		float tanFov = tan(valueFov * (3.14159265359 / 180) * 0.5);
+
+		projMatrixFovInjected[0][0] = 1.0 / (tanFov * ViewportAspect);
+		projMatrixFovInjected[1][1] = 1.0 / tanFov;
+
+		return mul( mul( WorldMatrix,ViewMatrix ) , projMatrixFovInjected );
+	#endif
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 // オブジェクトのテクスチャ
 
@@ -319,7 +353,7 @@ float2 ParallaxOcclusionMap(sampler2D heightMap, float2 coord, float3 V, int num
 float4 ColorRender_VS(float4 Pos : POSITION) : POSITION 
 {
     // カメラ視点のワールドビュー射影変換
-    return mul( Pos, WorldViewProjMatrix );
+    return mul( Pos, WorldViewProjMatrix_Final() );
 }
 
 // ピクセルシェーダ
@@ -345,7 +379,7 @@ technique EdgeTec < string MMDPass = "edge"; > {
 float4 Shadow_VS(float4 Pos : POSITION) : POSITION
 {
     // カメラ視点のワールドビュー射影変換
-    return mul( Pos, WorldViewProjMatrix );
+    return mul( Pos, WorldViewProjMatrix_Final() );
 }
 
 // ピクセルシェーダ
@@ -383,7 +417,7 @@ VS_OUTPUT Basic_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : T
     VS_OUTPUT Out = (VS_OUTPUT)0;
     
     // カメラ視点のワールドビュー射影変換
-    Out.Pos = mul( Pos, WorldViewProjMatrix );
+    Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
     
     // カメラとの相対位置
     Out.Eye = CameraPosition - mul( Pos, WorldMatrix );
@@ -606,7 +640,7 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
     BufferShadow_OUTPUT Out = (BufferShadow_OUTPUT)0;
 
     // カメラ視点のワールドビュー射影変換
-    Out.Pos = mul( Pos, WorldViewProjMatrix );
+    Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
 	
 	Out.PosWorld = mul( Pos, WorldMatrix );
     

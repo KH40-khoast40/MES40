@@ -1,4 +1,16 @@
 
-Ver 2.0 -> Ver 2.1
+Ver 2.1 -> Ver 2.2
 
-Nothing in the Object.fx changed, but the settings you've made with MES40 Controller.pmd in ver 2.0 might not produce the exact same visual now in ver 2.1
+Add:
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//NOTICE: If you use the ExcellentShadow version of the shader, then ignore this section. Go to the "ExcellentShadowObject.fxsub" in the "ExcellentShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "ScreenShadowMap" tab
+
+#define CUSTOM_FOV 0 //Can serve as decimal FOV, and/or to apply the FOV of ripped Diva camera automatically
+
+	#define Custom_Fov_Model "MES40 Controller.pmd"
+	#define Custom_Fov_Bone "fov"
+	#define Custom_Fov_Axis 1 // 1=x | 2=y | 3=z ; Determine which direction of the bone controls the FOV value
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
