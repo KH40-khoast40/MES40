@@ -23,6 +23,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
 - Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
+- Custom FOV
 - Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
 
@@ -74,9 +75,10 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
+- Custom FOV : [banitron](https://www.deviantart.com/banitron)
 - SimpleSoftShadow : [ビームマンP](https://w.atwiki.jp/beamman)
 - ExcellentShadow : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
-- RotatedPoissonShadow : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
+- ~~RotatedPoissonShadow~~ (removed) : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 - Mixing shaders : [KH40](https://www.deviantart.com/khoast40)
 - Special thanks : [FlyingSpirits-P](https://www.deviantart.com/flyingspirits-p), [Minmode](https://www.deviantart.com/minmode)
   
