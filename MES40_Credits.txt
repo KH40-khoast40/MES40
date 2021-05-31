@@ -8,6 +8,7 @@ Rim Light support 			: KH40
 Untinted Spa/CubeMap/Specular support 	: KH40
 Parallax support 	                : Rui (Ray-cast)
 Vertex color support 			: KH40
+IBL support                             : KH40
 Sub map support 			: KH40
 Alpha test support 			: KH40
 SimpleSoftShadow 			: ビームマンP

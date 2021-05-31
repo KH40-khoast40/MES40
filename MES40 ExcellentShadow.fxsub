@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 2.2 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 2.3 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -266,6 +266,42 @@ textureCUBE CubeMap
 sampler CubeMapSamp = sampler_state
 {
     Texture = <CubeMap>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = CLAMP;
+	ADDRESSV  = CLAMP;
+	MAXANISOTROPY = 16;
+};
+
+textureCUBE CubeMapLow
+<
+	string ResourceName = CubeMapTexture;
+	int Width = IBL_Resolution;
+    int Height = IBL_Resolution;
+>;
+sampler CubeMapLowSamp = sampler_state
+{
+    Texture = <CubeMapLow>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	//MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = CLAMP;
+	ADDRESSV  = CLAMP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef IBLTexture
+textureCUBE IBLtex
+<
+	string ResourceName = IBLTexture;
+	int Width = IBL_Resolution;
+    int Height = IBL_Resolution;
+>;
+sampler IBLSamp = sampler_state
+{
+    Texture = <IBLtex>;
     MINFILTER = ANISOTROPIC;
 	MAGFILTER = ANISOTROPIC;
 	MIPFILTER = ANISOTROPIC;
@@ -779,6 +815,9 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 			Subsurface_Rim_Intensity = Subsurface_Rim_Intensity_F;
 			Subsurface_Rim_Gradient = Subsurface_Rim_Gradient_F;
 			Subsurface_Color = float3(Subsurface_Color_R_F,Subsurface_Color_G_F,Subsurface_Color_B_F);
+			
+			IBL_Intensity = IBL_Intensity_F;
+			IBL_Blur = IBL_Blur_F;
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -1053,6 +1092,124 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	
 	#endif
 	
+	////////////////////////////////////////////////////////////////////////////////////
+	
+	float U = IBL_Blur;
+	float V = IBL_Blur;
+	float W = IBL_Blur;
+	
+	#if IBL == 1
+	
+		#if IBL_Use_NormalMap == 1
+			float3 IBL_Normal = NormalDirection;
+		#else
+			float3 IBL_Normal = IN.Normal;
+		#endif
+		
+		#ifdef IBLTexture
+		
+			float4 IBLtex = texCUBE(IBLSamp, IBL_Normal);
+			
+				if (IBL_Blur > 0)
+				{
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,0,0));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,0,0));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,0,0));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,V,0));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,-V,0));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,0,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,0,-W));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,V,0));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,V,0));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,-V,0));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,-V,0));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,V,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,-V,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,0,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,0,W));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,V,-W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(0,-V,-W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,0,-W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,0,-W));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,V,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,V,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,-V,W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,-V,-W));
+				
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,-V,-W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,V,-W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(-U,V,-W));
+				IBLtex += texCUBE(IBLSamp, IBL_Normal+float3(U,-V,W));
+				
+				IBLtex =  saturate(IBLtex/27);
+				}
+				
+		#else
+		
+			float4 IBLtex = texCUBE(CubeMapLowSamp, IBL_Normal);
+			
+				if (IBL_Blur > 0)
+				{
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,0,0));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,0,0));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,0,0));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,V,0));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,-V,0));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,0,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,0,-W));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,V,0));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,V,0));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,-V,0));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,-V,0));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,V,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,-V,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,0,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,0,W));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,V,-W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(0,-V,-W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,0,-W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,0,-W));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,V,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,V,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,-V,W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,-V,-W));
+				
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,-V,-W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,V,-W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(-U,V,-W));
+				IBLtex += texCUBE(CubeMapLowSamp, IBL_Normal+float3(U,-V,W));
+				
+				IBLtex =  saturate(IBLtex/27);
+				}
+				
+		#endif
+
+		IBLtex.rgb *= IBL_Intensity;
+		
+		Color.rgb *= (IBLtex.rgb);
+		Color.rgb *= ((IBLtex.rgb)+1);
+		
+		ShadowColor.rgb *= (IBLtex.rgb);
+		ShadowColor.rgb *= ((IBLtex.rgb)+1);
+		
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
 	/////////////////////////////////////////////////////////////////////////////////////////
     // ■ ExcellentShadowシステム　ここから↓
     
@@ -1213,6 +1370,12 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 			#endif
 			
 			Color = lerp( Color , VertexColor , VertexColor_view );
+			
+			#if IBL == 1
+				Color.rgb = lerp( Color.rgb , IBLtex , IBL_view );
+			#else
+				Color.rgb = lerp( Color.rgb , 1 , IBL_view );
+			#endif
 			
 			Color.rgb = lerp( Color.rgb , SadowMapVal , ToonShadow_view );
 			
@@ -1407,6 +1570,12 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 			#endif
 			
 			ans = lerp( ans , VertexColor , VertexColor_view );
+			
+			#if IBL == 1
+				ans.rgb = lerp( ans.rgb , IBLtex , IBL_view );
+			#else
+				ans.rgb = lerp( ans.rgb , 1 , IBL_view );
+			#endif
 			
 			ans.rgb = lerp( ans.rgb , comp , ToonShadow_view );
 			

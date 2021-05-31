@@ -130,6 +130,18 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define IBL 0 //Enable or disable image-based lighting
+
+	//#define IBLTexture "ibl.dds" //Delete the double slash at the beginning of the line to enable it, if you disable it while IBL is on, IBL will use CubeMapTexture instead
+	
+	float IBL_Intensity = 1;
+	float IBL_Blur = 0; //Increase it in case the color is still not smooth even when IBL_Resolution is set to 1
+	
+	#define IBL_Resolution 1 //Can be as high as the resolution of a face of the cubemap, but generally you should set it to 1 or 2 to have smooth color
+	#define IBL_Use_NormalMap 1
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #define SOFTSHADOW 0
 //0: MMD's Standard Shadow
 //1: Beamman's SimpleSoftShadow

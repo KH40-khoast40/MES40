@@ -9,6 +9,7 @@ float NormalMap_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; str
 float SpecularMap_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Specular Maps"; >;
 float SubMap_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Sub Maps"; >;
 float VertexColor_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Vertex Color"; >;
+float IBL_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "IBL"; >;
 float ToonShadow_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Toons + Shadows"; >;
 float AlphaDisabled_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "Alpha Disabled"; >;
 float UV_view : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "UV"; >;
@@ -115,6 +116,14 @@ static float Subsurface_Color_G_F = Subsurface_Color.g + Subsurface_Color_G_P*Su
 float Subsurface_Color_B_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_B +"; >;
 float Subsurface_Color_B_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ss_Color_B -"; >;
 static float Subsurface_Color_B_F = Subsurface_Color.b + Subsurface_Color_B_P*Subsurface_Color.b - Subsurface_Color_B_M*Subsurface_Color.b; 
+
+float IBL_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Intensity +"; >;
+float IBL_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Intensity -"; >;
+static float IBL_Intensity_F = IBL_Intensity + IBL_Intensity_P*IBL_Intensity - IBL_Intensity_M*IBL_Intensity;
+
+float IBL_Blur_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Blur +"; >;
+float IBL_Blur_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Blur -"; >;
+static float IBL_Blur_F = IBL_Blur + IBL_Blur_P*IBL_Blur - IBL_Blur_M*IBL_Blur;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
