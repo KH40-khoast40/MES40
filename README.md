@@ -21,7 +21,8 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Untinted Spa/CubeMap/Specular **(v1.21)** <img src="https://i.imgur.com/TbyDk5X.png" alt="alt text" width="256" height="72">
 - Parallax **(v1.3)** <img src="https://i.imgur.com/wzwMYuQ.png" alt="alt text" width="256" height="72">
 - Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
-- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
+- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/IogxPyJ.png" alt="alt text" width="256" height="72">
+- Image-based Lighting (IBL) **(v2.3)** <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - Custom FOV
 - Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
@@ -74,6 +75,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Parallax support : [Rui (Ray-cast)](https://twitter.com/Rui_cg)
 - Vertex color support : [KH40](https://www.deviantart.com/khoast40)
 - Sub map support : [KH40](https://www.deviantart.com/khoast40)
+- Image-based Lighting (IBL) support : [KH40](https://www.deviantart.com/khoast40)
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
 - Custom FOV : [banitron](https://www.deviantart.com/banitron)
 - SimpleSoftShadow : [ビームマンP](https://w.atwiki.jp/beamman)
