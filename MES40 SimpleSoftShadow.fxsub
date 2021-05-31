@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 2.3 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 2.31 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -786,9 +786,9 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		//NormalColor.xy *= NormalMap_Intensity;
 		
 		float3 NormalDirection = normalize(IN.Normal);
-		float3 V = normalize(IN.Eye);
+		float3 v = normalize(IN.Eye);
 		
-		float3x3 tangentFrame = compute_tangent_frame(NormalDirection, V, Tex);
+		float3x3 tangentFrame = compute_tangent_frame(NormalDirection, v, Tex);
 		NormalDirection = normalize(mul(NormalColor - 1.0f, tangentFrame));
 	
 	#else
