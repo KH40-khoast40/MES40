@@ -52,7 +52,7 @@ float Spa_CubeMap_Saturation = 1;
 #define CubeMap_Affected_By_LightDirection 0 //1 is enabled, 0 is disabled
 
 float SpecularLight_Intensity = 1;
-float SpecularLight_Focus = 50; //Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
+float SpecularLight_Focus = 50;
 #define SpecularLight_Affected_By_LightDirection 1 //1 is enabled (MMD default), 0 is disabled
 
 float Spa_CubeMap_SpecularLight_Tint = 1; //Should be set from 0 to 1. 1 will give the tinted shine as vanilla MMD, 0 will give a dull, untinted shine, values between 0 and 1 are the blends of the two
@@ -132,9 +132,13 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 
 #define IBL 0 //Enable or disable image-based lighting
 
+//If you have a problem of the lighting having seams, you can use cubemap making programs like CubeMapGen to down-sample the cubemap directly, and not rely on IBL_Resolution
+
 	//#define IBLTexture "ibl.dds" //Delete the double slash at the beginning of the line to enable it, if you disable it while IBL is on, IBL will use CubeMapTexture instead
 	
 	float IBL_Intensity = 1;
+	float IBL_Brightness = 1;
+	float IBL_Saturation = 1;
 	float IBL_Blur = 0; //Increase it in case the color is still not smooth even when IBL_Resolution is set to 1
 	
 	#define IBL_Resolution 1 //Can be as high as the resolution of a face of the cubemap, but generally you should set it to 1 or 2 to have smooth color

@@ -40,10 +40,10 @@ static float Spa_CubeMap_Saturation_F = Spa_CubeMap_Saturation + Spa_CubeMap_Sat
 float SpecularLight_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Intensity +"; >;
 float SpecularLight_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Intensity -"; >;
 static float SpecularLight_Intensity_F = SpecularLight_Intensity + SpecularLight_Intensity_P*SpecularLight_Intensity - SpecularLight_Intensity_M*SpecularLight_Intensity;  
-	
+
 float SpecularLight_Focus_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Focus +"; >;
 float SpecularLight_Focus_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "sl_Focus -"; >;
-static float SpecularLight_Focus_F = SpecularLight_Focus + SpecularLight_Focus_P*SpecularLight_Focus*1000 - SpecularLight_Focus_M*SpecularLight_Focus*100;  
+static float SpecularLight_Focus_F = SpecularLight_Focus + SpecularLight_Focus_P*SpecularLight_Focus*1000 - SpecularLight_Focus_M*SpecularLight_Focus*100;
 	
 float Spa_CubeMap_SpecularLight_Tint_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_sl_Tint +"; >;
 float Spa_CubeMap_SpecularLight_Tint_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "s/c_sl_Tint -"; >;
@@ -120,6 +120,14 @@ static float Subsurface_Color_B_F = Subsurface_Color.b + Subsurface_Color_B_P*Su
 float IBL_Intensity_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Intensity +"; >;
 float IBL_Intensity_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Intensity -"; >;
 static float IBL_Intensity_F = IBL_Intensity + IBL_Intensity_P*IBL_Intensity - IBL_Intensity_M*IBL_Intensity;
+
+float IBL_Brightness_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Brightness +"; >;
+float IBL_Brightness_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Brightness -"; >;
+static float IBL_Brightness_F = IBL_Brightness + IBL_Brightness_P*IBL_Brightness - IBL_Brightness_M*IBL_Brightness;
+
+float IBL_Saturation_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Saturation +"; >;
+float IBL_Saturation_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Saturation -"; >;
+static float IBL_Saturation_F = IBL_Saturation + IBL_Saturation_P*IBL_Saturation*10 - IBL_Saturation_M*IBL_Saturation;
 
 float IBL_Blur_P : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Blur +"; >;
 float IBL_Blur_M : CONTROLOBJECT < string name = "MES40 Controller.pmd"; string item = "ibl_Blur -"; >;

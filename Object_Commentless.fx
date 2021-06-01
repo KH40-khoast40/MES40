@@ -129,6 +129,8 @@ float3 Rim_Color = float3(1,1,1);
 	//#define IBLTexture "ibl.dds"
 	
 	float IBL_Intensity = 1;
+	float IBL_Brightness = 1;
+	float IBL_Saturation = 1;
 	float IBL_Blur = 0;
 	
 	#define IBL_Resolution 1

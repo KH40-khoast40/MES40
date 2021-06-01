@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 2.31 by KH40 (https://www.deviantart.com/khoast40)
+//  MMD Extended Shader (MES40) ver 2.32 by KH40 (https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
@@ -538,7 +538,7 @@ VS_OUTPUT Basic_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : T
     
     // スペキュラ色計算
     float3 HalfVector = normalize( normalize(Out.Eye) + -LightDirection );
-    Out.Specular = pow( max(0,dot( HalfVector, Out.Normal )), SpecularLight_Focus ) * SpecularColor;
+    Out.Specular = pow( max(0,dot( HalfVector, Out.Normal )), SpecularPower ) * SpecularColor;
     
     return Out;
 }
@@ -817,6 +817,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 			Subsurface_Color = float3(Subsurface_Color_R_F,Subsurface_Color_G_F,Subsurface_Color_B_F);
 			
 			IBL_Intensity = IBL_Intensity_F;
+			IBL_Brightness = IBL_Brightness_F;
+			IBL_Saturation = IBL_Saturation_F;
 			IBL_Blur = IBL_Blur_F;
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1198,13 +1200,20 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 				
 		#endif
 
-		IBLtex.rgb *= IBL_Intensity;
+		IBLtex.rgb *= IBL_Brightness;
 		
-		Color.rgb *= (IBLtex.rgb);
-		Color.rgb *= ((IBLtex.rgb)+1);
+		float IBLtexMono = (IBLtex.r+IBLtex.g+IBLtex.b)/3;
 		
-		ShadowColor.rgb *= (IBLtex.rgb);
-		ShadowColor.rgb *= ((IBLtex.rgb)+1);
+		IBLtex.rgb = lerp(IBLtexMono,IBLtex.rgb,IBL_Saturation);
+		
+		float3 IBLtex0 = lerp(0,IBLtex,IBL_Intensity);
+		float3 IBLtex1 = lerp(1,IBLtex,IBL_Intensity);
+		
+		Color.rgb *= (IBLtex1);
+		Color.rgb *= (IBLtex0+1);
+		
+		ShadowColor.rgb *= (IBLtex1);
+		ShadowColor.rgb *= (IBLtex0+1);
 		
 	#endif
 	

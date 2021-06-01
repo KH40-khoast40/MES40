@@ -1,18 +1,16 @@
 
-Ver 2.2 -> Ver 2.3
+Ver 2.31 -> Ver 2.32
 
-Add:
+**In the IBL section, add:**
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//If you have a problem of the lighting having seams, you can use cubemap making programs like CubeMapGen to down-sample the cubemap directly, and not rely on IBL_Resolution
 
-#define IBL 0 //Enable or disable image-based lighting
+**And:**
 
-	//#define IBLTexture "ibl.dds" //Delete the double slash at the beginning of the line to enable it, if you disable it while IBL is on, IBL will use CubeMapTexture instead
-	
-	float IBL_Intensity = 1;
-	float IBL_Blur = 0; //Increase it in case the color is still not smooth even when IBL_Resolution is set to 1
-	
-	#define IBL_Resolution 1 //Can be as high as the resolution of a face of the cubemap, but generally you should set it to 1 or 2 to have smooth color
-	#define IBL_Use_NormalMap 1
+float IBL_Brightness = 1;
+float IBL_Saturation = 1;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+**And delete this comment:**
+
+//Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
+(in the SpecularLight_Focus line) 
