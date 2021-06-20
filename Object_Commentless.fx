@@ -8,7 +8,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//NOTICE: If you use the ExcellentShadow version of the shader, then ignore this section. Go to the "ExcellentShadowObject.fxsub" in the "ExcellentShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "ScreenShadowMap" tab
+//NOTICE: If you use the HgShadow version of the shader, then ignore this section. Go to the "HgShadow_ViewportMap.fxsub" in the "HgShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "HgS_VMap" tab
 
 #define CUSTOM_FOV 0
 

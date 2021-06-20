@@ -12,7 +12,7 @@ IBL support                             : KH40
 Sub map support 			: KH40
 Alpha test support 			: KH40
 SimpleSoftShadow 			: ビームマンP
-ExcellentShadow 			: そぼろ
+HgShadow			        : 針金P
 Custom FOV support                      : banitron
 Mixing shaders 				: KH40
 Special thanks 				: FlyingSpirits-P, Minmode
@@ -25,8 +25,8 @@ KH40 		: https://www.deviantart.com/khoast40
 舞力介入P	: https://www.nicovideo.jp/user/282266
 LessThanEqual	: https://twitter.com/lessthanequal
 ビームマンP	: https://w.atwiki.jp/beamman
+針金P		: https://twitter.com/hariganep
 Rui (Ray-cast)  : https://twitter.com/Rui_cg || https://github.com/ray-cast/ray-mmd
-そぼろ		: https://www.nicovideo.jp/mylist/17392230
 banitron        : https://www.deviantart.com/banitron
 FlyingSpirits-P	: https://www.fs-pblog.com/
 Minmode		: https://www.deviantart.com/minmode

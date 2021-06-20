@@ -1,16 +1,4 @@
 
-Ver 2.31 -> Ver 2.32
+Ver 2.32 -> Ver 2.4
 
-**In the IBL section, add:**
-
-//If you have a problem of the lighting having seams, you can use cubemap making programs like CubeMapGen to down-sample the cubemap directly, and not rely on IBL_Resolution
-
-**And:**
-
-float IBL_Brightness = 1;
-float IBL_Saturation = 1;
-
-**And delete this comment:**
-
-//Add double slash at the beginning of the line to disable this, making it has the same value as the Reflection box in PMXE
-(in the SpecularLight_Focus line) 
+The Object.fx from v2.32 can work with the v2.4 update no problem. Just that 'SOFTSHADOW 2' will now prompt the shader to use HgShadow instead of ExcellentShadow

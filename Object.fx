@@ -8,7 +8,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//NOTICE: If you use the ExcellentShadow version of the shader, then ignore this section. Go to the "ExcellentShadowObject.fxsub" in the "ExcellentShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "ScreenShadowMap" tab
+//NOTICE: If you use the HgShadow version of the shader, then ignore this section. Go to the "HgShadow_ViewportMap.fxsub" in the "HgShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there, not here. Finally, apply that fxsub on the model in the "HgS_VMap" tab
 
 #define CUSTOM_FOV 0 //Can serve as decimal FOV, and/or to apply the FOV of ripped Diva camera automatically
 
@@ -149,17 +149,16 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 #define SOFTSHADOW 0
 //0: MMD's Standard Shadow
 //1: Beamman's SimpleSoftShadow
-//2: Sovoro's ExcellentShadow (Must load ExcellentShadow.x to enable soft shadow)
+//2: HariganeP's HgShadow (Must load HgShadow.x to enable soft shadow)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define TOONSHADING 1
-//Should be disabled when doing realistic faces,...
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define ALPHATEST 0
-//Should be enabled for objects have complex texture transparency like trees, some certain models' hair,... that MMD might have trouble rendering/ Or for you lazy-ass don't bother to re-order things like Miku's lace,...)
+//Should be enabled for objects have complex texture transparency like trees... but not recommended for textures that have gradient transparency
 
 	float Alpha_Threshold = 0.5; //Scale: 0-1
 

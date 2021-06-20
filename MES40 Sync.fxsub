@@ -144,7 +144,5 @@ float3 Custom_Fov : CONTROLOBJECT < string name = Custom_Fov_Model ; string item
 #elif SOFTSHADOW == 1
 	#include "MES40 SimpleSoftShadow.fxsub"
 #elif SOFTSHADOW == 2
-	#include "MES40 ExcellentShadow.fxsub"
-#elif SOFTSHADOW == 3
-	#include "MES40 RotatedPoissonShadow.fxsub"
+	#include "MES40 HgShadow.fxsub"
 #endif

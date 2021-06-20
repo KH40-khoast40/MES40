@@ -7,10 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // パラメータ宣言
 
-//Shadow blur rate
-float SoftShadowParam = 0.25;
-
-#define SHADOWMAP_SIZE 256
+//////////////////// HgShadowでこれを追加します ///////////////////////
+// HgShadowの必要なパラメータを取り込む
+#include "HgShadow_ObjHeader.fxh"
+///////////////////////////////////////////////////////////////////////
 
 // 座法変換行列
 float4x4 WorldViewProjMatrix      : WORLDVIEWPROJECTION;
@@ -522,7 +522,7 @@ float4 Basic_PS(VS_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap
 		
 		TexColor = lerp(TexColorMono, TexColor, TexColor.a * Spa_CubeMap_Saturation);
 		
-        #if Spa_CubeMap_Use_SpecularMap == 1
+		#if Spa_CubeMap_Use_SpecularMap == 1
         if(spadd) Color.rgb += TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity;
         else      Color.rgb *= TexColor.rgb * SpecularLevel * Spa_CubeMap_Intensity;
 		
@@ -548,13 +548,13 @@ float4 Basic_PS(VS_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap
 	#else
     Color.rgb += IN.Specular * SpecularLight_Intensity;
 	#endif
-    
+	
 	#if ALPHATEST == 1
 		
 			Color.a = ( Color.a >= Alpha_Threshold ) ? 1 : 0;
 				
 	#endif
-	
+    
     return Color;
 }
 
@@ -672,6 +672,7 @@ struct BufferShadow_OUTPUT {
     float2 SpTex    : TEXCOORD4;	 // スフィアマップテクスチャ座標
 	float4 VColor	: TEXCOORD5;
 	float4 PosWorld : TEXCOORD6;
+	float4 PPos     : TEXCOORD7;    // 射影座標
     float4 Color    : COLOR0;       // ディフューズ色
 };
 
@@ -682,6 +683,8 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
 
     // カメラ視点のワールドビュー射影変換
     Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
+	
+	Out.PPos = Out.Pos;
 	
 	Out.PosWorld = mul( Pos, WorldMatrix );
     
@@ -769,7 +772,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	float3 ParallaxViewDirection = ParallaxOcclusionDirection(IN.Normal, IN.PosWorld.xyz, Tex);
 	Tex = ParallaxOcclusionMap(HeightMapSamp, Tex, ParallaxViewDirection, 15, Parallax_Scale);
 	#endif
-
+	
 	float4 VertexColor = float4(lerp(float3(1,1,1),float3(IN.VColor.r,IN.VColor.g,IN.VColor.b),Vertex_Color_Intensity),IN.VColor.a);
 	
 	#ifdef SubMapTexture
@@ -803,6 +806,9 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	//////////////////////Specular Map related values//////////////////////////////////////
 	#ifdef SpecularMapTexture
 	float4 SpecularLevel = tex2D(SpecularMapSamp, Tex);
+	float SpecularLevelMonoCalculate = (SpecularLevel.r+SpecularLevel.g+SpecularLevel.b)/3;
+	float3 SpecularLevelMono = float3(SpecularLevelMonoCalculate,SpecularLevelMonoCalculate,SpecularLevelMonoCalculate);
+	SpecularLevel.rgb = lerp(SpecularLevelMono,SpecularLevel.rgb,SpecularMap_Saturation);
 	
 	#else
 	float4 SpecularLevel = float4(1,1,1,1);
@@ -810,14 +816,14 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	/////////////////////////////////////////////////////////////////////////////////////
 
     // スペキュラ色計算
-    #if SpecularLight_Affected_By_LightDirection == 1
+	#if SpecularLight_Affected_By_LightDirection == 1
     float3 HalfVector = normalize( normalize(IN.Eye) + -LightDirection );
 	
 	#else
 	float3 HalfVector = normalize( normalize(IN.Eye));
 	#endif
 	
-    #if SpecularLight_Use_NormalMap == 1
+	#if SpecularLight_Use_NormalMap == 1
     float3 Specular = pow( max(0,dot( HalfVector, NormalDirection )), SpecularLight_Focus ) * SpecularColor;
 	
 	#else
@@ -851,8 +857,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
         // スフィアマップ適用
         float4 TexColor = tex2D(ObjSphareSampler,IN.SpTex);
 		
-		float TexColorMonoCaculate = (TexColor.r+TexColor.g+TexColor.b)/3;
-		float4 TexColorMono = float4(TexColorMonoCaculate,TexColorMonoCaculate,TexColorMonoCaculate,TexColor.a);
+		float TexColorMonoCalculate = (TexColor.r+TexColor.g+TexColor.b)/3;
+		float4 TexColorMono = float4(TexColorMonoCalculate,TexColorMonoCalculate,TexColorMonoCalculate,TexColor.a);
 		
 		TexColor = lerp(TexColorMono, TexColor, TexColor.a * Spa_CubeMap_Saturation);
 		
@@ -940,8 +946,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	
 	/////////////////////////////////////////////////////////////////////////////////////
 	
-	float CubeEnvMonoCaculate = (CubeEnv.r+CubeEnv.g+CubeEnv.b)/3;
-	float4 CubeEnvMono = float4(CubeEnvMonoCaculate,CubeEnvMonoCaculate,CubeEnvMonoCaculate,CubeEnv.a);
+	float CubeEnvMonoCalculate = (CubeEnv.r+CubeEnv.g+CubeEnv.b)/3;
+	float4 CubeEnvMono = float4(CubeEnvMonoCalculate,CubeEnvMonoCalculate,CubeEnvMonoCalculate,CubeEnv.a);
 	
 	CubeEnv = lerp(CubeEnvMono, CubeEnv, CubeEnv.a * Spa_CubeMap_Saturation);
 	
@@ -1025,6 +1031,24 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	ShadowColor.rgb *= (SubMap+1);
 	#endif
 	
+	#endif
+	
+	#if Rim_Use_NormalMap == 1
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), NormalDirection)* Rim_Gradient);
+	#else
+		float rim = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Rim_Gradient);
+	#endif
+		
+	#if Rim_Use_SpecularMap == 1
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * SpecularLevel * Rim_Intensity ;
+	#else
+		Color.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Intensity ;
+	#endif
+		
+	#ifdef Rim_Shadow_Area_Intensity
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
+	#else
+		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
 	#endif
 	
 	////////////////////////////////////////////////////////////////////////////////////
@@ -1150,7 +1174,130 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		
 	#endif
 	
-	/////////////////////////////////////////////////////////////////////////////////////
+	////////////////////// HgShadowに対応するにはこれを追加します ///////////////////////
+
+    if(HgShadow_Valid){
+        // 影域判定
+        float comp = HgShadow_GetSelfShadowRate(IN.PPos);
+		float compSSS = comp;
+
+        // PMD・PMXのトゥーン適用
+		
+		#if Toon_Use_NormalMap == 1
+			float LightNormal = dot(normalize(NormalDirection), -LightDirection);
+		#else
+			float LightNormal = dot(normalize(IN.Normal), -LightDirection);
+		#endif
+		
+        if ( useToon ) {
+		
+		#if TOONSHADING == 1
+		
+            comp = min(saturate(LightNormal*Toon_Gradient), comp);
+			
+			#if SUBSURFACETOON == 1
+				compSSS = min(saturate(LightNormal*Subsurface_Toon_Gradient), compSSS);
+			#endif
+			
+		#endif
+		
+            ShadowColor.rgb *= MaterialToon * Toon_Brightness;
+        }
+		
+		#if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+		float4 Thickness = tex2D( ThicknessMapSamp , Tex );
+		#endif
+		
+		float rimSSS = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Subsurface_Rim_Gradient);
+		compSSS -= rimSSS * Subsurface_Rim_Intensity;
+		
+		#ifdef Subsurface_Rim_Shadow_Area_Intensity
+		comp += rimSSS * Subsurface_Rim_Shadow_Area_Intensity * Subsurface_Rim_Intensity;
+		#endif
+		
+		#ifndef Subsurface_Rim_Shadow_Area_Intensity
+		comp += rimSSS * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Subsurface_Rim_Intensity;
+		#endif
+        
+		Color.rgb = lerp(Color.rgb, ( Color.rgb * Subsurface_Color * (Subsurface_Color+1) ) ,(1-compSSS)* Subsurface_Toon_Intensity);
+		
+		#endif
+
+        // 影色に濃度を加味する
+        HgShadow_COLOR Out = HgShadow_GetShadowDensity(Color, ShadowColor, useToon, LightNormal);
+
+        // 影色の合成
+		
+        #if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+        float4 ans = lerp(Out.Color, Out.ShadowColor, (1-comp)*Thickness*Toon_Intensity);
+		#else
+		float4 ans = lerp(Out.Color, Out.ShadowColor, (1-comp)*Toon_Intensity);
+		#endif
+		
+		#else
+		
+		float4 ans = lerp(Out.Color, Out.ShadowColor, (1-comp)*Toon_Intensity);
+		
+		#endif
+		
+		#if ALPHATEST == 1
+		
+			ans.a = ( ans.a >= Alpha_Threshold ) ? 1 : 0;
+				
+		#endif
+		
+        if( transp ) ans.a = 0.5f;
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+		if (Controller)
+		{
+			#ifdef NormalMapTexture
+				ans.rgb = lerp( ans.rgb , NormalDirection , Normal_view );
+				ans.rgb = lerp( ans.rgb , tex2D(NormalMapSamp,Tex) , NormalMap_view );
+			#else
+				ans.rgb = lerp( ans.rgb , IN.Normal , Normal_view );
+				ans.rgb = lerp( ans.rgb , 0 , NormalMap_view );
+			#endif
+			
+			#ifdef SpecularMapTexture
+				ans.rgb = lerp( ans.rgb , tex2D(SpecularMapSamp,Tex) , SpecularMap_view );
+			#else
+				ans.rgb = lerp( ans.rgb , 1 , SpecularMap_view );
+			#endif
+			
+			#ifdef SubMapTexture
+				ans.rgb = lerp( ans.rgb , tex2D(SubMapSamp,SubMapUV) , SubMap_view );
+			#else
+				ans.rgb = lerp( ans.rgb , 0 , SubMap_view );
+			#endif
+			
+			ans = lerp( ans , VertexColor , VertexColor_view );
+			
+			#if IBL == 1
+				ans.rgb = lerp( ans.rgb , IBLtex , IBL_view );
+			#else
+				ans.rgb = lerp( ans.rgb , 1 , IBL_view );
+			#endif
+			
+			ans.rgb = lerp( ans.rgb , comp , ToonShadow_view );
+			
+			ans.a = lerp( ans.a , 1 , AlphaDisabled_view );
+			
+			ans.rgb = lerp(ans.rgb , float3(Tex,0) , UV_view );
+			
+			ans.rgb = lerp(ans.rgb , float3(SubMapUV,0) , SubMapUV_view );
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+		
+        return ans;
+
+    }else{  // ←elseで分岐しないと32bit版でエラーになる
+
+    /////////////////////////////////////////////////////////////////////////////////////
     
     // テクスチャ座標に変換
     IN.ZCalcTex /= IN.ZCalcTex.w;
@@ -1210,38 +1357,20 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
         // シャドウバッファ外
         return Color;
     } else {
-        float comp = 0;
-		float compSSS = 0;
-		float U = SoftShadowParam / SHADOWMAP_SIZE;
-		float V = SoftShadowParam / SHADOWMAP_SIZE;
+        float comp;
+		float compSSS;
         if(parthf) {
             // セルフシャドウ mode2
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,0)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,0)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,0)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,-V)).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+            comp=1-saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
         } else {
             // セルフシャドウ mode1
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,0)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,0)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,0)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(0,-V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(-U,-V)).r , 0.0f)*SKII1-0.3f);
-	        comp += saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord+float2(U,-V)).r , 0.0f)*SKII1-0.3f);
+            comp=1-saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord).r , 0.0f)*SKII1-0.3f);
         }
-        comp = 1-saturate(comp/9);
 		compSSS = comp;
+		
         if ( useToon ) {
             // トゥーン適用
-			#if TOONSHADING == 1
+            #if TOONSHADING == 1
 			
 			#if Toon_Use_NormalMap == 1
             comp = min(saturate(dot(NormalDirection,-LightDirection)*Toon_Gradient),comp);
@@ -1284,26 +1413,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		#endif
 		
 		
-		#if Rim_Use_NormalMap == 1
-		float rim = 1.0 - saturate(dot(normalize(IN.Eye), NormalDirection)* Rim_Gradient);
-		#else
-		float rim = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Rim_Gradient);
-		#endif
-		
-		#if Rim_Use_SpecularMap == 1
-		Color.rgb += float3(rim,rim,rim) * Rim_Color * SpecularLevel * Rim_Intensity ;
-		#else
-		Color.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Intensity ;
-		#endif
-		
-		#ifdef Rim_Shadow_Area_Intensity
-		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
-		#else
-		ShadowColor.rgb += float3(rim,rim,rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
-		#endif
-		
-        
-        #if SUBSURFACETOON == 1
+		#if SUBSURFACETOON == 1
 		
 		#ifdef ThicknessMapTexture
         float4 ans = lerp(Color, ShadowColor, (1-comp)*Thickness*Toon_Intensity);
@@ -1369,7 +1479,8 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		
         return ans;
-    }
+		}
+	}	
 }
 
 // オブジェクト描画用テクニック（アクセサリ用）
