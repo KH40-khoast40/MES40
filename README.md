@@ -25,7 +25,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Image-based Lighting (IBL) **(v2.3)** <img src="https://i.imgur.com/IogxPyJ.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - Custom FOV
-- Soft Shadow ( ビームマンP's full_SimpleSoftShadow / そぼろ's Excellent Shadow )
+- Soft Shadow ( ビームマンP's full_SimpleSoftShadow / 針金P's HgShadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
 
 ## Usage
@@ -79,8 +79,9 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Alpha test support : [KH40](https://www.deviantart.com/khoast40)
 - Custom FOV : [banitron](https://www.deviantart.com/banitron)
 - SimpleSoftShadow : [ビームマンP](https://w.atwiki.jp/beamman)
-- ExcellentShadow : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
+- ~~ExcellentShadow~~ (removed) : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
 - ~~RotatedPoissonShadow~~ (removed) : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
+- HgShadow : [針金P](https://twitter.com/hariganep)
 - Mixing shaders : [KH40](https://www.deviantart.com/khoast40)
 - Special thanks : [FlyingSpirits-P](https://www.deviantart.com/flyingspirits-p), [Minmode](https://www.deviantart.com/minmode)
   
