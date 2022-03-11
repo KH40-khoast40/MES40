@@ -1,4 +1,0 @@
-
-Ver 2.32 -> Ver 2.4
-
-The Object.fx from v2.32 can work with the v2.4 update no problem. Just that 'SOFTSHADOW 2' will now prompt the shader to use HgShadow instead of ExcellentShadow
