@@ -1,0 +1,1381 @@
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  MMD Extended Shader (MES40) ver 3.0 by KH40 (https://www.deviantart.com/khoast40 || https://twitter.com/khoast40)
+//
+//  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+// パラメータ宣言
+
+//////////////////// HgShadowでこれを追加します ///////////////////////
+// HgShadowの必要なパラメータを取り込む
+#include "HgShadow_ObjHeader.fxh"
+///////////////////////////////////////////////////////////////////////
+
+// 座法変換行列
+float4x4 WorldViewProjMatrix      : WORLDVIEWPROJECTION;
+float4x4 WorldMatrix              : WORLD;
+float4x4 ViewMatrix               : VIEW;
+float4x4 ProjMatrix               : PROJECTION;
+float4x4 WorldViewMatrix          : WORLDVIEW;
+float4x4 LightWorldViewProjMatrix : WORLDVIEWPROJECTION < string Object = "Light"; >;
+
+float3   LightDirection    : DIRECTION < string Object = "Light"; >;
+float3   CameraPosition    : POSITION  < string Object = "Camera"; >;
+
+// マテリアル色
+float4   MaterialDiffuse   : DIFFUSE  < string Object = "Geometry"; >;
+float3   MaterialAmbient   : AMBIENT  < string Object = "Geometry"; >;
+float3   MaterialEmmisive  : EMISSIVE < string Object = "Geometry"; >;
+float3   MaterialSpecular  : SPECULAR < string Object = "Geometry"; >;
+float    SpecularPower     : SPECULARPOWER < string Object = "Geometry"; >;
+float3   MaterialToon      : TOONCOLOR;
+float4   EdgeColor         : EDGECOLOR;
+float4   GroundShadowColor : GROUNDSHADOWCOLOR;
+// ライト色
+float3   LightDiffuse      : DIFFUSE   < string Object = "Light"; >;
+float3   LightAmbient      : AMBIENT   < string Object = "Light"; >;
+float3   LightSpecular     : SPECULAR  < string Object = "Light"; >;
+static float4 DiffuseColor  = MaterialDiffuse  * float4(LightDiffuse, 1.0f);
+static float3 AmbientColor  = MaterialAmbient  * LightAmbient + MaterialEmmisive;
+static float3 SpecularColor = MaterialSpecular * LightSpecular;
+
+// テクスチャ材質モーフ値
+float4   TextureAddValue   : ADDINGTEXTURE;
+float4   TextureMulValue   : MULTIPLYINGTEXTURE;
+float4   SphereAddValue    : ADDINGSPHERETEXTURE;
+float4   SphereMulValue    : MULTIPLYINGSPHERETEXTURE;
+
+bool	 use_subtexture;    // サブテクスチャフラグ
+
+bool     parthf;   // パースペクティブフラグ
+bool     transp;   // 半透明フラグ
+bool	 spadd;    // スフィアマップ加算合成フラグ
+#define SKII1    1500
+#define SKII2    8000
+
+float2 ViewportSize : VIEWPORTPIXELSIZE;
+static float ViewportAspect = ViewportSize.x / ViewportSize.y;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+float4x4 WorldViewProjMatrix_Final()
+{
+	#if CUSTOM_FOV == 0
+		return WorldViewProjMatrix;
+	#else
+		float4x4 projMatrixFovInjected = ProjMatrix;
+		
+		float valueFov;
+		
+		#if Custom_Fov_Axis == 1
+			valueFov = Custom_Fov.x;
+		#elif Custom_Fov_Axis == 2
+			valueFov = Custom_Fov.y;
+		#else
+			valueFov = Custom_Fov.z;
+		#endif
+		
+		float tanFov = tan(valueFov * (3.14159265359 / 180) * 0.5);
+
+		projMatrixFovInjected[0][0] = 1.0 / (tanFov * ViewportAspect);
+		projMatrixFovInjected[1][1] = 1.0 / tanFov;
+
+		return mul( mul( WorldMatrix,ViewMatrix ) , projMatrixFovInjected );
+	#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+float4 IBL_Blurring(sampler Samp, float3 Normal)
+{	
+	float U = IBL_Blur;
+	float V = IBL_Blur;
+	float W = IBL_Blur;
+	
+	float4 ibl = texCUBE(Samp, Normal);
+	
+	if (IBL_Blur > 0)
+		{
+			ibl += texCUBE(Samp, Normal+float3(0,0,0));
+
+			ibl += texCUBE(Samp, Normal+float3(U,0,0));
+			ibl += texCUBE(Samp, Normal+float3(-U,0,0));
+					
+			ibl += texCUBE(Samp, Normal+float3(0,V,0));
+			ibl += texCUBE(Samp, Normal+float3(0,-V,0));
+					
+			ibl += texCUBE(Samp, Normal+float3(0,0,W));
+			ibl += texCUBE(Samp, Normal+float3(0,0,-W));
+					
+			ibl += texCUBE(Samp, Normal+float3(U,V,0));
+			ibl += texCUBE(Samp, Normal+float3(-U,V,0));
+			ibl += texCUBE(Samp, Normal+float3(-U,-V,0));
+			ibl += texCUBE(Samp, Normal+float3(U,-V,0));
+					
+			ibl += texCUBE(Samp, Normal+float3(0,V,W));
+			ibl += texCUBE(Samp, Normal+float3(0,-V,W));
+			ibl += texCUBE(Samp, Normal+float3(U,0,W));
+			ibl += texCUBE(Samp, Normal+float3(-U,0,W));
+					
+			ibl += texCUBE(Samp, Normal+float3(0,V,-W));
+			ibl += texCUBE(Samp, Normal+float3(0,-V,-W));
+			ibl += texCUBE(Samp, Normal+float3(U,0,-W));
+			ibl += texCUBE(Samp, Normal+float3(-U,0,-W));
+					
+			ibl += texCUBE(Samp, Normal+float3(U,V,W));
+			ibl += texCUBE(Samp, Normal+float3(-U,V,W));
+			ibl += texCUBE(Samp, Normal+float3(-U,-V,W));
+			ibl += texCUBE(Samp, Normal+float3(-U,-V,-W));
+					
+			ibl += texCUBE(Samp, Normal+float3(U,-V,-W));
+			ibl += texCUBE(Samp, Normal+float3(U,V,-W));
+			ibl += texCUBE(Samp, Normal+float3(-U,V,-W));
+			ibl += texCUBE(Samp, Normal+float3(U,-V,W));
+					
+			ibl =  saturate(ibl/27);
+		}
+		
+	return ibl;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// オブジェクトのテクスチャ
+
+#ifndef AnimatedTexture
+
+	texture ObjectTexture: MATERIALTEXTURE;
+	
+#else
+
+	texture ObjectTexture: ANIMATEDTEXTURE 
+	<
+		string ResourceName = AnimatedTexture;
+	>;
+	
+#endif
+
+sampler ObjTexSampler = sampler_state {
+    texture = <ObjectTexture>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+
+// スフィアマップのテクスチャ
+texture ObjectSphereMap: MATERIALSPHEREMAP;
+sampler ObjSphareSampler = sampler_state {
+    texture = <ObjectSphereMap>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+
+// トゥーンマップのテクスチャ
+texture ObjectToonTexture: MATERIALTOONTEXTURE;
+sampler ObjToonSampler = sampler_state {
+    texture = <ObjectToonTexture>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = CLAMP;
+	ADDRESSV  = CLAMP;
+	MAXANISOTROPY = 16;
+};
+
+#ifdef NormalMapTexture
+
+#if NormalMap_Animated == 0
+
+	texture2D NormalMap <
+		string ResourceName = NormalMapTexture;
+		int MipLevels = 0;
+	>;
+	
+#else
+
+	texture2D NormalMap: ANIMATEDTEXTURE <
+		string ResourceName = NormalMapTexture;
+		int MipLevels = 0;
+	>;
+	
+#endif
+
+sampler2D NormalMapSamp = sampler_state {
+	texture = <NormalMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+
+float3x3 compute_tangent_frame(float3 Normal, float3 View, float2 UV)
+{
+  float3 dp1 = ddx(View);
+  float3 dp2 = ddy(View);
+  float2 duv1 = ddx(UV);
+  float2 duv2 = ddy(UV);
+
+  float3x3 M = float3x3(dp1, dp2, cross(dp1, dp2));
+  float2x3 inverseM = float2x3(cross(M[1], M[2]), cross(M[2], M[0]));
+  float3 Tangent = mul(float2(duv1.x, duv2.x), inverseM);
+  float3 Binormal = mul(float2(duv1.y, duv2.y), inverseM);
+
+  return float3x3(normalize(Tangent), normalize(Binormal), Normal);
+}
+#endif
+
+#ifdef SpecularMapTexture
+
+#if SpecularMap_Animated == 0
+
+	texture2D SpecularMap <
+		string ResourceName = SpecularMapTexture;
+		int MipLevels = 0;
+	>;
+
+#else
+
+	texture2D SpecularMap : ANIMATEDTEXTURE <
+		string ResourceName = SpecularMapTexture;
+		int MipLevels = 0;
+	>;
+	
+#endif
+
+sampler2D SpecularMapSamp = sampler_state {
+	texture = <SpecularMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef CubeMapTexture
+//Cube Map
+textureCUBE CubeMap
+<
+	string ResourceName = CubeMapTexture;
+>;
+sampler CubeMapSamp = sampler_state
+{
+    Texture = <CubeMap>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = CLAMP;
+	ADDRESSV  = CLAMP;
+	MAXANISOTROPY = 16;
+};
+
+textureCUBE CubeMapLow
+<
+	string ResourceName = CubeMapTexture;
+	int Width = IBL_Resolution;
+    int Height = IBL_Resolution;
+>;
+sampler CubeMapLowSamp = sampler_state
+{
+    Texture = <CubeMapLow>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	//MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = CLAMP;
+	ADDRESSV  = CLAMP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef IBLTexture
+textureCUBE IBLtex
+<
+	string ResourceName = IBLTexture;
+	int Width = IBL_Resolution;
+    int Height = IBL_Resolution;
+>;
+sampler IBLSamp = sampler_state
+{
+    Texture = <IBLtex>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = CLAMP;
+	ADDRESSV  = CLAMP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef SubMapTexture
+//Sub Map
+texture2D SubMap <
+	string ResourceName = SubMapTexture;
+	int MipLevels = 0;
+>;
+sampler2D SubMapSamp = sampler_state {
+	texture = <SubMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef ThicknessMapTexture
+//Thickness Map
+texture2D ThicknessMap <
+	string ResourceName = ThicknessMapTexture;
+	int MipLevels = 0;
+>;
+sampler2D ThicknessMapSamp = sampler_state {
+	texture = <ThicknessMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+#ifdef HeightMapTexture
+//Height Map
+texture2D HeightMap <
+	string ResourceName = HeightMapTexture;
+	int MipLevels = 0;
+>;
+sampler2D HeightMapSamp = sampler_state {
+	texture = <HeightMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+
+float3 ParallaxOcclusionDirection(float3 normal, float3 worldPos, float2 coord)
+{
+	float3 viewNormal = mul(normal, (float3x3)WorldViewMatrix);
+	float3 viewPosition = mul(float4(worldPos, 1), WorldViewMatrix).xyz;
+	float3 viewdir = normalize(-viewPosition);
+
+	float3 dp1 = ddx(viewPosition);
+	float3 dp2 = ddy(viewPosition);
+
+	float2 duv1 = ddx(coord);
+	float2 duv2 = ddy(coord);
+
+	float3x3 M = float3x3(dp1, dp2, viewNormal);
+	float2x3 I = float2x3(cross(M[1], M[2]), cross(M[2], M[0]));
+	   
+	float2 proj = mul(I, viewdir) / dot(dp1, I[0]);
+
+	float3 direction;
+	direction.xy = duv1 * proj.x + duv2 * proj.y;
+	direction.z = dot(viewNormal, viewdir);
+
+	return direction;
+}
+
+float2 ParallaxOcclusionMap(sampler2D heightMap, float2 coord, float3 V, int numSteps, float parallaxScale)
+{
+	float step = 1.0 / numSteps;
+	float2 delta = parallaxScale * V.xy / (-V.z * numSteps);
+
+	float curLayerHeight = 0;
+	float curHeight = tex2D(heightMap, coord).r;
+	float2 curTexcoord = coord;
+
+	[unroll]
+	for (int i = 0; i < numSteps; i++)
+	{
+		if (curHeight <= curLayerHeight)
+			break;
+
+		curLayerHeight += step; 
+		curTexcoord -= delta;
+		curHeight = tex2D(heightMap, curTexcoord).r;
+	}
+
+	float2 deltaTexcoord = delta * 0.5;
+	float deltaHeight = step * 0.5;
+
+	curTexcoord += deltaTexcoord;
+	curLayerHeight -= deltaHeight;
+
+	[unroll]
+	for (int j = 0; j < 5; j++)
+	{
+		deltaTexcoord *= 0.5;
+		deltaHeight *= 0.5;
+
+		curHeight = tex2D(heightMap, curTexcoord).r;
+
+		if (curHeight > curLayerHeight)
+		{
+			curTexcoord -= deltaTexcoord;
+			curLayerHeight += deltaHeight;
+		}
+		else
+		{
+			curTexcoord += deltaTexcoord;
+			curLayerHeight -= deltaHeight;
+		}
+	}
+
+	return curTexcoord;
+}
+#endif
+
+#ifdef ShadingMapTexture
+//Thickness Map
+texture2D ShadingMap <
+	string ResourceName = ShadingMapTexture;
+	int MipLevels = 0;
+>;
+sampler2D ShadingMapSamp = sampler_state {
+	texture = <ShadingMap>;
+	MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	ADDRESSU  = WRAP;
+	ADDRESSV  = WRAP;
+	MAXANISOTROPY = 16;
+};
+#endif
+
+float Script : STANDARDSGLOBAL <
+	string ScriptOutput = "color";
+	string ScriptClass = "sceneorobject";
+	string ScriptOrder = "standard";
+> = 0.8;
+
+texture PointLightRender : RENDERCOLORTARGET <
+	#if LIGHTSOURCES == 1
+		float2 ViewportRatio = float2(1.0,1.0);
+	#else
+		float2 ViewportRatio = float2(0.0,0.0);
+	#endif
+	string Format = "A16B16G16R16F";
+>;
+sampler PointLightSamp = sampler_state {
+    texture = <PointLightRender>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	MAXANISOTROPY = 16;
+};
+
+texture SpotLightRender : RENDERCOLORTARGET <
+	#if LIGHTSOURCES == 1
+		float2 ViewportRatio = float2(1.0,1.0);
+	#else
+		float2 ViewportRatio = float2(0.0,0.0);
+	#endif
+	string Format = "A16B16G16R16F";
+>;
+sampler SpotLightSamp = sampler_state {
+    texture = <SpotLightRender>;
+    MINFILTER = ANISOTROPIC;
+	MAGFILTER = ANISOTROPIC;
+	MIPFILTER = ANISOTROPIC;
+	MAXANISOTROPY = 16;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// 輪郭描画
+
+// 頂点シェーダ
+float4 ColorRender_VS(float4 Pos : POSITION) : POSITION 
+{
+    // カメラ視点のワールドビュー射影変換
+    return mul( Pos, WorldViewProjMatrix_Final() );
+}
+
+// ピクセルシェーダ
+float4 ColorRender_PS() : COLOR
+{
+    // 輪郭色で塗りつぶし
+    return EdgeColor;
+}
+
+// 輪郭描画用テクニック
+technique EdgeTec < string MMDPass = "edge"; > {
+    pass DrawEdge {
+        VertexShader = compile vs_2_0 ColorRender_VS();
+        PixelShader  = compile ps_2_0 ColorRender_PS();
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// 影（非セルフシャドウ）描画
+
+// 頂点シェーダ
+float4 Shadow_VS(float4 Pos : POSITION) : POSITION
+{
+    // カメラ視点のワールドビュー射影変換
+    return mul( Pos, WorldViewProjMatrix_Final() );
+}
+
+// ピクセルシェーダ
+float4 Shadow_PS() : COLOR
+{
+    // 地面影色で塗りつぶし
+    return GroundShadowColor;
+}
+
+// 影描画用テクニック
+technique ShadowTec < string MMDPass = "shadow"; > {
+    pass DrawShadow {
+        VertexShader = compile vs_2_0 Shadow_VS();
+        PixelShader  = compile ps_2_0 Shadow_PS();
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// オブジェクト描画（セルフシャドウOFF）
+
+struct VS_OUTPUT {
+    float4 Pos        : POSITION;    // 射影変換座標
+    float2 Tex        : TEXCOORD1;   // テクスチャ
+    float4 Color      : COLOR0;      // ディフューズ色
+};
+
+// 頂点シェーダ
+VS_OUTPUT Basic_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0)
+{
+    VS_OUTPUT Out = (VS_OUTPUT)0;
+    
+    // カメラ視点のワールドビュー射影変換
+    Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
+    
+    // ディフューズ色＋アンビエント色 計算
+    Out.Color.rgb = AmbientColor;
+    Out.Color.a = DiffuseColor.a;
+    Out.Color = saturate( Out.Color );
+    
+    // テクスチャ座標
+    Out.Tex = Tex;
+    
+    return Out;
+}
+
+// ピクセルシェーダ
+float4 Basic_PS(VS_OUTPUT IN, uniform bool useTexture) : COLOR0
+{
+    float4 Color = IN.Color;
+	
+    if ( useTexture ) 
+	{
+        // テクスチャ適用
+        Color *= tex2D( ObjTexSampler, IN.Tex );
+    }
+	
+	#if ALPHATEST == 1
+		
+			Color.a = ( Color.a >= Alpha_Threshold ) ? 1 : 0;
+				
+	#endif
+    
+    return Color;
+}
+
+// オブジェクト描画用テクニック（アクセサリ用）
+// 不要なものは削除可
+technique MainTec0 < string MMDPass = "object"; bool UseTexture = false;> {
+    pass DrawObject {
+        VertexShader = compile vs_3_0 Basic_VS();
+        PixelShader  = compile ps_3_0 Basic_PS(false);
+    }
+}
+
+technique MainTec1 < string MMDPass = "object"; bool UseTexture = true;> {
+    pass DrawObject {
+        VertexShader = compile vs_3_0 Basic_VS();
+        PixelShader  = compile ps_3_0 Basic_PS(true);
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// セルフシャドウ用Z値プロット
+
+struct VS_ZValuePlot_OUTPUT {
+    float4 Pos : POSITION;              // 射影変換座標
+    float4 ShadowMapTex : TEXCOORD0;    // Zバッファテクスチャ
+};
+
+// 頂点シェーダ
+VS_ZValuePlot_OUTPUT ZValuePlot_VS( float4 Pos : POSITION )
+{
+    VS_ZValuePlot_OUTPUT Out = (VS_ZValuePlot_OUTPUT)0;
+
+    // ライトの目線によるワールドビュー射影変換をする
+    Out.Pos = mul( Pos, LightWorldViewProjMatrix );
+
+    // テクスチャ座標を頂点に合わせる
+    Out.ShadowMapTex = Out.Pos;
+
+    return Out;
+}
+
+// ピクセルシェーダ
+float4 ZValuePlot_PS( float4 ShadowMapTex : TEXCOORD0 ) : COLOR
+{
+    // R色成分にZ値を記録する
+    return float4(ShadowMapTex.z/ShadowMapTex.w,0,0,1);
+}
+
+// Z値プロット用テクニック
+technique ZplotTec < string MMDPass = "zplot"; > {
+    pass ZValuePlot {
+        AlphaBlendEnable = FALSE;
+        VertexShader = compile vs_2_0 ZValuePlot_VS();
+        PixelShader  = compile ps_2_0 ZValuePlot_PS();
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// オブジェクト描画（セルフシャドウON）
+
+// シャドウバッファのサンプラ。"register(s0)"なのはMMDがs0を使っているから
+sampler DefSampler : register(s0);
+
+struct BufferShadow_OUTPUT {
+    float4 Pos      : POSITION;     // 射影変換座標
+    float4 ZCalcTex : TEXCOORD0;    // Z値
+    float4 TexUVs   : TEXCOORD1;    // テクスチャ
+    float3 Normal   : TEXCOORD2;    // 法線
+    float3 Eye      : TEXCOORD3;    // カメラとの相対位置
+    float2 SpTex    : TEXCOORD4;	 // スフィアマップテクスチャ座標
+	float4 VColor	: TEXCOORD5;
+	float4 PosWorld : TEXCOORD6;
+	float4 PPos     : TEXCOORD7;    // 射影座標
+    float4 Color    : COLOR0;       // ディフューズ色
+};
+
+// 頂点シェーダ
+BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At , uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon)
+{
+    BufferShadow_OUTPUT Out = (BufferShadow_OUTPUT)0;
+
+    // カメラ視点のワールドビュー射影変換
+    Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
+	
+	Out.PPos = Out.Pos;
+	
+	Out.PosWorld = mul( Pos, WorldMatrix );
+    
+    // カメラとの相対位置
+    Out.Eye = CameraPosition - mul( Pos, WorldMatrix );
+    // 頂点法線
+    Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
+	// ライト視点によるワールドビュー射影変換
+    Out.ZCalcTex = mul( Pos, LightWorldViewProjMatrix );
+	
+	Out.VColor = VColor;
+	
+	Out.TexUVs = float4(Tex,SubMapUV);
+    
+    // ディフューズ色＋アンビエント色 計算
+    Out.Color.rgb = AmbientColor;
+    if ( !useToon ) {
+        Out.Color.rgb += max(0,dot( Out.Normal, -LightDirection )) * DiffuseColor.rgb;
+    }
+    Out.Color.a = DiffuseColor.a;
+    Out.Color = saturate( Out.Color );
+    
+    if ( useSphereMap ) {
+		if ( use_subtexture ) {
+			// PMXサブテクスチャ座標
+			Out.SpTex = Tex2;
+	    } else {
+		}
+    }
+    
+    return Out;
+}
+
+// ピクセルシェーダ
+float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon) : COLOR
+{
+	float Global_Darkness = 0;
+	float3 Global_Color = float3(1,1,1);
+	float Light_Brightness = 1;
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+		if (Controller)
+		{
+			Toon_Intensity = Toon_Intensity_F;
+			Toon_Brightness = Toon_Brightness_F;
+			Toon_Gradient = Toon_Gradient_F;
+			
+			Spa_CubeMap_Intensity = Spa_CubeMap_Intensity_F;
+			Spa_CubeMap_Saturation = Spa_CubeMap_Saturation_F;
+			
+			SpecularLight_Intensity = SpecularLight_Intensity_F;
+			SpecularLight_Focus = SpecularLight_Focus_F;
+			
+			Spa_CubeMap_SpecularLight_Tint = Spa_CubeMap_SpecularLight_Tint_F;
+			
+			////////////////////////////////////////////////////////////////////
+			
+			NormalMap_Intensity = NormalMap_Intensity_F;
+			
+			SpecularMap_Saturation = SpecularMap_Saturation_F;
+			
+			////////////////////////////////////////////////////////////////////
+			
+			Rim_Intensity = Rim_Intensity_F;
+			Rim_Gradient = Rim_Gradient_F;
+			Rim_Length = Rim_Length_F;
+			Rim_Color = float3(Rim_Color_R_F,Rim_Color_G_F,Rim_Color_B_F);
+			
+			Vertex_Color_Intensity = Vertex_Color_Intensity_F;
+			
+			Parallax_Scale = Parallax_Scale_F;
+			
+			Subsurface_Toon_Intensity = Subsurface_Toon_Intensity_F;
+			Subsurface_Toon_Gradient = Subsurface_Toon_Gradient_F;
+			Subsurface_Rim_Intensity = Subsurface_Rim_Intensity_F;
+			Subsurface_Rim_Gradient = Subsurface_Rim_Gradient_F;
+			Subsurface_Color = float3(Subsurface_Color_R_F,Subsurface_Color_G_F,Subsurface_Color_B_F);
+			
+			IBL_Intensity = IBL_Intensity_F;
+			IBL_Brightness = IBL_Brightness_F;
+			IBL_Saturation = IBL_Saturation_F;
+			IBL_Blur = IBL_Blur_F;
+			
+			Global_Darkness = Global_Darkness_;
+			Global_Color = float3(1-Global_R_M,1-Global_G_M,1-Global_B_M);
+			
+			Light_Brightness = Light_Brightness + Light_Brightness_P - Light_Brightness_M;
+		}
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	float2 Tex = IN.TexUVs.xy;
+	
+	#if PARALLAX == 1
+		float3 ParallaxViewDirection = ParallaxOcclusionDirection(IN.Normal, IN.PosWorld.xyz, Tex);
+		Tex = ParallaxOcclusionMap(HeightMapSamp, Tex, ParallaxViewDirection, 15, Parallax_Scale);
+	#endif
+	
+	//NORMAL MAP////////////////////////////////////////////////////////////////////////
+	
+	#ifdef NormalMapTexture
+		
+		float4 NormalColor;
+		NormalColor.xyz = tex2D(NormalMapSamp,Tex).rgb*2;
+		NormalColor.a = 1;
+		
+		NormalColor.xyz = lerp(float3(0.5,0.5,1)*2,NormalColor.xyz,NormalMap_Intensity);
+		
+		float3 Normal_Mapped = normalize(IN.Normal);
+		float3 v = normalize(IN.Eye);
+		
+		float3x3 tangentFrame = compute_tangent_frame(Normal_Mapped, v, Tex);
+		Normal_Mapped = normalize(mul(NormalColor - 1.0f, tangentFrame));
+	
+	#else
+		
+		float3 Normal_Mapped = normalize(IN.Normal);
+		
+	#endif
+	
+	//SPECULAR MAP///////////////////////////////////////////////////////////////////////
+	
+	#ifdef SpecularMapTexture
+	
+		float4 SpecularLevel = tex2D(SpecularMapSamp, Tex);
+		float SpecularLevelMono = (SpecularLevel.r+SpecularLevel.g+SpecularLevel.b)/3;
+		SpecularLevel.rgb = lerp(SpecularLevelMono,SpecularLevel.rgb,SpecularMap_Saturation);
+	
+		#else
+	
+		float4 SpecularLevel = float4(1,1,1,1);
+		
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+	#if SpecularLight_Affected_By_LightDirection == 1
+	
+		float3 HalfVector = normalize( normalize(IN.Eye) + -LightDirection );
+		
+	#else
+	
+		float3 HalfVector = normalize( normalize(IN.Eye));
+		
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+	#if SpecularLight_Use_NormalMap == 1
+		float3 Normal_Specular = Normal_Mapped;
+	#else
+		float3 Normal_Specular = IN.Normal;
+	#endif
+	
+	float3 Specular = pow( max(0,dot( HalfVector, Normal_Specular )), SpecularLight_Focus ) * SpecularColor;
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+    float4 Color = IN.Color;
+    float4 ShadowColor = float4(saturate(AmbientColor), Color.a);  // 影の色
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+    if ( useTexture ) {
+        // テクスチャ適用
+        float4 TexColor = tex2D( ObjTexSampler, Tex );
+        // テクスチャ材質モーフ数
+	    TexColor.rgb = lerp(1, TexColor * TextureMulValue + TextureAddValue, TextureMulValue.a + TextureAddValue.a);
+        Color *= TexColor;
+        ShadowColor *= TexColor;
+    }
+	
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	#if Rim_Use_NormalMap == 1
+		float3 Normal_Rim = Normal_Mapped;
+	#else
+		float3 Normal_Rim = IN.Normal;
+	#endif
+	
+	float Rim = 1.0 - saturate(dot(normalize(IN.Eye), Normal_Rim)* Rim_Gradient);
+	
+	#if Rim_Directional == 1
+	
+		float Rim_Direction = pow(saturate(dot(Normal_Rim,-LightDirection)),Rim_Length);
+		
+		Rim *= Rim_Direction;
+		
+	#endif
+	
+	////////////////////////////////////////////////////////
+	
+	#if Rim_Use_SpecularMap == 1
+		float SpecularLevel_Rim = SpecularLevel;
+	#else
+		float SpecularLevel_Rim = 1;
+	#endif
+	
+	Color.rgb += Rim * Rim_Color * SpecularLevel_Rim * Rim_Intensity ;
+	
+	////////////////////////////////////////////////////////
+	
+	#ifdef Rim_Shadow_Area_Intensity
+	
+		ShadowColor.rgb += float3(Rim,Rim,Rim) * Rim_Color * Rim_Shadow_Area_Intensity * Rim_Intensity;
+		
+	#else
+	
+		ShadowColor.rgb += float3(Rim,Rim,Rim) * Rim_Color * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Rim_Intensity;
+		
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+    
+    IN.ZCalcTex /= IN.ZCalcTex.w;
+    float2 TransTexCoord;
+    TransTexCoord.x = (1.0f + IN.ZCalcTex.x)*0.5f;
+    TransTexCoord.y = (1.0f - IN.ZCalcTex.y)*0.5f;
+    
+    float Shadow = 0;
+	float ShadowSSS = 0;
+		
+	if(HgShadow_Valid && SOFTSHADOW == 1)
+	{
+		Shadow = HgShadow_GetSelfShadowRate(IN.PPos);
+	}
+	else
+	{
+		if(parthf) 
+		{
+		//mode2
+			Shadow=1-saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord).r , 0.0f)*SKII2*TransTexCoord.y-0.3f);
+		} 
+		else 
+		{
+		//mode1
+			Shadow=1-saturate(max(IN.ZCalcTex.z-tex2D(DefSampler,TransTexCoord).r , 0.0f)*SKII1-0.3f);
+		}
+	}
+	
+	#if Shadow_Sharp == 1
+		Shadow = step(0.25,Shadow);
+	#endif
+		
+	ShadowSSS = Shadow;
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+	float Toon = 1;
+	
+	#ifdef ShadingMapTexture
+		Toon = tex2D(ShadingMapSamp,Tex).r;
+	#endif
+	
+	float ToonSSS = Toon;
+	
+	if ( useToon ) 
+	{	
+		#if TOONSHADING == 1
+			
+			#if Toon_Use_NormalMap == 1
+				float3 Normal_Toon = Normal_Mapped;
+			#else
+				float3 Normal_Toon = IN.Normal;
+			#endif
+			
+			#if HALFLAMBERT == 0
+			
+				Toon = min(dot(Normal_Toon,-LightDirection)*Toon_Gradient,Toon);
+					
+					#if SUBSURFACETOON == 1
+						ToonSSS = min(dot(Normal_Toon,-LightDirection)*Subsurface_Toon_Gradient,ToonSSS);
+					#endif
+
+			#else
+			
+				Toon = min(pow(dot(Normal_Toon,-LightDirection)*0.5+0.5,2)*Toon_Gradient,Toon);
+					
+					#if SUBSURFACETOON == 1
+						ToonSSS = min(pow(dot(Normal_Toon,-LightDirection)*0.5+0.5,2)*Subsurface_Toon_Gradient,ToonSSS);
+					#endif
+					
+			#endif
+		
+		#endif
+		
+		ShadowColor.rgb *= MaterialToon * Toon_Brightness;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+		
+	float Shade = saturate(Toon);
+	float ShadeSSS = saturate(ToonSSS);
+	
+	bool Shadow_Enable = false;
+	if( (saturate(TransTexCoord).x == TransTexCoord.x) && (saturate(TransTexCoord).y == TransTexCoord.y) ){Shadow_Enable = true;}
+	if(HgShadow_Valid){Shadow_Enable = true;}
+	
+	if(Shadow_Enable)
+	{
+		Shade = min(saturate(Shadow),saturate(Toon));
+		ShadeSSS = min(saturate(ShadowSSS),saturate(ToonSSS));
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+		
+	#if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+			float4 Thickness = tex2D( ThicknessMapSamp , Tex );
+		#endif
+			
+		float RimSSS = 1.0 - saturate(dot(normalize(IN.Eye), IN.Normal)* Subsurface_Rim_Gradient);
+		ShadeSSS -= RimSSS * Subsurface_Rim_Intensity;
+		
+		#ifdef Subsurface_Rim_Shadow_Area_Intensity
+			Shade += RimSSS * Subsurface_Rim_Shadow_Area_Intensity * Subsurface_Rim_Intensity;
+		#else
+			Shade += RimSSS * ((ShadowColor.r+ShadowColor.g+ShadowColor.b)/3) * Subsurface_Rim_Intensity;
+		#endif
+		
+		Color.rgb = lerp(Color.rgb, ( Color.rgb * Subsurface_Color * (Subsurface_Color+1) ) ,(1-ShadeSSS)* Subsurface_Toon_Intensity);
+	
+	#endif
+		
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+			
+	#if SUBSURFACETOON == 1
+		
+		#ifdef ThicknessMapTexture
+			Color = lerp(Color, ShadowColor, (1-Shade)*Thickness*Toon_Intensity);
+		#else
+			Color = lerp(Color, ShadowColor, (1-Shade)*Toon_Intensity);
+		#endif
+			
+	#else
+				
+		Color = lerp(Color, ShadowColor, (1-Shade)*Toon_Intensity);
+			
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+	float3 ColorTemp = Color.rgb;
+	
+	#if Spa_CubeMap_Use_SpecularMap == 1
+		float4 SpecularLevel_Spa_Cubemap = SpecularLevel;
+	#else
+		float4 SpecularLevel_Spa_Cubemap = 1;
+	#endif
+	
+    if ( useSphereMap ) 
+	{
+		/////////////////////////////////////////////////////////////////////////
+		
+		#if Spa_CubeMap_Use_NormalMap == 1
+			float3 Normal_WV = Normal_Mapped;
+		#else
+			float3 Normal_WV = IN.Normal;
+		#endif
+		
+		float2 NormalWV = mul( Normal_WV , (float3x3)ViewMatrix );
+		
+		/////////////////////////////////////////////////////////////////////////
+		
+	    IN.SpTex.x = NormalWV.x * 0.5f + 0.5f;
+	    IN.SpTex.y = NormalWV.y * -0.5f + 0.5f;
+		
+        // スフィアマップ適用
+        float4 TexColor = tex2D(ObjSphareSampler,IN.SpTex);
+		
+		float TexColorMonoCalculate = (TexColor.r+TexColor.g+TexColor.b)/3;
+		float4 TexColorMono = float4(TexColorMonoCalculate,TexColorMonoCalculate,TexColorMonoCalculate,TexColor.a);
+		
+		TexColor = lerp(TexColorMono, TexColor, TexColor.a * Spa_CubeMap_Saturation);
+		
+        // スフィアテクスチャ材質モーフ数
+        TexColor.rgb = lerp(spadd?0:1, TexColor * SphereMulValue + SphereAddValue, SphereMulValue.a + SphereAddValue.a);
+		
+		/////////////////////////////////////////////////////////////////////////
+		
+		if(spadd) 
+			{
+				Color.rgb += TexColor.rgb * SpecularLevel_Spa_Cubemap * Spa_CubeMap_Intensity;
+				
+				ColorTemp = 1 - ( (1-(TexColor.rgb * SpecularLevel_Spa_Cubemap * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+				
+				Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );	
+			} 
+		else 
+			{
+				Color.rgb *= TexColor.rgb * SpecularLevel_Spa_Cubemap * Spa_CubeMap_Intensity;
+				
+				ColorTemp = 1 - ( (1-(TexColor.rgb * SpecularLevel_Spa_Cubemap * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+				
+				Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+			}
+	
+        Color.a *= TexColor.a;
+    }
+	
+	//CUBE MAP///////////////////////////////////////////////////////////////////////////
+	
+	#ifdef CubeMapTexture
+	
+		float3 CubeMapRefVec;
+		
+		#if CubeMap_Affected_By_LightDirection == 0
+		
+			CubeMapRefVec = normalize(IN.Eye);
+		
+		#else
+		
+			CubeMapRefVec = normalize(normalize(IN.Eye)-LightDirection);
+		
+		#endif
+		
+		/////////////////////////////////////////////////////////////////////////
+		
+		#if Spa_CubeMap_Use_NormalMap == 1
+			float3 Normal_ReflVec = Normal_Mapped;
+		#else
+			float3 Normal_ReflVec = IN.Normal;
+		#endif
+		
+		float3 ReflVec = reflect(-CubeMapRefVec, Normal_ReflVec);
+		float4 CubeMapRef = texCUBE(CubeMapSamp, ReflVec.xyz);
+		
+		/////////////////////////////////////////////////////////////////////////
+		
+		float CubeEnvMonoCalculate = (CubeMapRef.r+CubeMapRef.g+CubeMapRef.b)/3;
+		float4 CubeEnvMono = float4(CubeEnvMonoCalculate,CubeEnvMonoCalculate,CubeEnvMonoCalculate,CubeMapRef.a);
+		
+		CubeMapRef = lerp(CubeEnvMono, CubeMapRef, CubeMapRef.a * Spa_CubeMap_Saturation);
+		
+		/////////////////////////////////////////////////////////////////////////
+		
+		ColorTemp = Color.rgb;
+		
+		Color.rgb += CubeMapRef.rgb * SpecularLevel_Spa_Cubemap * Spa_CubeMap_Intensity;
+			
+		ColorTemp = 1 - ( (1-(CubeMapRef.rgb * SpecularLevel_Spa_Cubemap * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+				
+		Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+	
+	#endif
+	
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	ColorTemp = Color.rgb;
+	
+	#if SpecularLight_Use_SpecularMap == 1
+		float4 SpecularLevel_SpecularLight = SpecularLevel;
+	#else
+		float4 SpecularLevel_SpecularLight = 1;
+	#endif
+	
+	Color.rgb += Specular * SpecularLevel_SpecularLight * SpecularLight_Intensity;
+	
+	ColorTemp = 1 - ( (1-(Specular * SpecularLevel_SpecularLight * Spa_CubeMap_Intensity)) * (1-ColorTemp) );
+	
+	Color.rgb = lerp( Color.rgb , ColorTemp , 1 - Spa_CubeMap_SpecularLight_Tint );
+	
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	float4 VertexColor = float4(lerp(float3(1,1,1),float3(IN.VColor.r,IN.VColor.g,IN.VColor.b),Vertex_Color_Intensity),IN.VColor.a);
+	
+	#if VERTEXCOLOR == 1
+	
+		Color *= VertexColor;
+		
+	#endif
+	
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	float2 SubMapUV = IN.TexUVs.zw;
+	
+	#ifdef SubMapTexture
+		float3 SubMap = tex2D(SubMapSamp,SubMapUV);
+	#endif
+	
+	#if SUBMAP == 1
+	
+		#if Sub_Map_Type == 0
+		
+			Color.rgb = SubMap;
+		
+		#elif Sub_Map_Type == 1
+		
+			Color.rgb *= SubMap;
+		
+		#elif Sub_Map_Type == 2
+		
+			Color.rgb *= (SubMap+1);
+		
+		#else
+		
+			Color.rgb *= SubMap;
+			Color.rgb *= (SubMap+1);
+		
+		#endif
+	
+	#endif
+	
+	////////////////////////////////////////////////////////////////////////////////////
+	
+	#if IBL == 1
+	
+		///////////////////////////////////////////////////////////
+		
+		#if IBL_Use_NormalMap == 1
+			float3 Normal_IBL = Normal_Mapped;
+		#else
+			float3 Normal_IBL = IN.Normal;
+		#endif
+		
+		///////////////////////////////////////////////////////////
+		float4 FinalIBL = 0;
+
+		#ifdef IBLTexture
+		
+			FinalIBL = IBL_Blurring(IBLSamp,Normal_IBL);
+				
+		#else
+		
+			FinalIBL = IBL_Blurring(CubeMapLowSamp,Normal_IBL);
+				
+		#endif
+		
+		///////////////////////////////////////////////////////////
+
+		FinalIBL.rgb *= IBL_Brightness;
+		
+		float IBLtexMono = (FinalIBL.r+FinalIBL.g+FinalIBL.b)/3;
+		
+		FinalIBL.rgb = lerp(IBLtexMono,FinalIBL.rgb,IBL_Saturation);
+		
+		float3 IBLtex0 = lerp(0,FinalIBL,IBL_Intensity);
+		float3 IBLtex1 = lerp(1,FinalIBL,IBL_Intensity);
+		
+		Color.rgb *= (IBLtex1);
+		Color.rgb *= (IBLtex0+1);
+		
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	#if LIGHTSOURCES == 1
+	
+		float2 LightUV = float2(0.5, -0.5)*IN.PPos.xy/IN.PPos.w + float2(0.5,0.5);
+		
+		float3 LightSource = saturate(Global_Color-Global_Darkness) + ((tex2D(PointLightSamp,LightUV).rgb*2) + (tex2D(SpotLightSamp,LightUV).rgb*2)) * Light_Brightness;
+		
+		Color.rgb *= LightSource;
+	
+	#endif
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+		
+	#if ALPHATEST == 1
+		
+		Color.a = ( Color.a >= Alpha_Threshold ) ? 1 : 0;
+				
+	#endif
+		
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+		
+    if( transp ) Color.a = 0.5f;
+		
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	if (Controller)
+	{
+		#ifdef NormalMapTexture
+			Color.rgb = lerp( Color.rgb , Normal_Mapped , Normal_view );
+			Color.rgb = lerp( Color.rgb , tex2D(NormalMapSamp,Tex) , NormalMap_view );
+		#else
+			Color.rgb = lerp( Color.rgb , IN.Normal , Normal_view );
+			Color.rgb = lerp( Color.rgb , 0 , NormalMap_view );
+		#endif
+		
+		#ifdef SpecularMapTexture
+			Color.rgb = lerp( Color.rgb , tex2D(SpecularMapSamp,Tex) , SpecularMap_view );
+		#else
+			Color.rgb = lerp( Color.rgb , 1 , SpecularMap_view );
+		#endif
+		
+		#ifdef SubMapTexture
+			Color.rgb = lerp( Color.rgb , tex2D(SubMapSamp,SubMapUV) , SubMap_view );
+		#else
+			Color.rgb = lerp( Color.rgb , 0 , SubMap_view );
+		#endif
+		
+		#ifdef ShadingMapTexture
+			Color.rgb = lerp( Color.rgb , tex2D(ShadingMapSamp,Tex) , ShadingMap_view );
+		#else
+			Color.rgb = lerp( Color.rgb , 0 , ShadingMap_view );
+		#endif
+		
+		Color = lerp( Color , VertexColor , VertexColor_view );
+		
+		#if LIGHTSOURCES == 1
+			Color.rgb = lerp( Color.rgb , LightSource , LightSources_view );
+		#else
+			Color.rgb = lerp( Color.rgb , saturate(Global_Color-Global_Darkness) , LightSources_view );
+		#endif
+		
+		#if IBL == 1
+			Color.rgb = lerp( Color.rgb , FinalIBL , IBL_view );
+		#else
+			Color.rgb = lerp( Color.rgb , 1 , IBL_view );
+		#endif
+		
+		Color.rgb = lerp( Color.rgb , Shade , ToonShadow_view );
+		
+		Color.a = lerp( Color.a , 1 , AlphaDisabled_view );
+		
+		Color.rgb = lerp(Color.rgb , float3(Tex,0) , UV_view );
+		
+		Color.rgb = lerp(Color.rgb , float3(SubMapUV,0) , SubMapUV_view );
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//Color.rgb = LightSource;
+	
+    return Color;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include "MES40 PointLight.fxsub"
+#include "MES40 SpotLight.fxsub"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float4 ClearColor = {0,0,0,0};
+float ClearDepth  = 1;
+
+texture DepthRender : RENDERDEPTHSTENCILTARGET 
+<
+	#if LIGHTSOURCES == 1
+		float2 ViewportRatio = float2(1.0,1.0);
+	#else
+		float2 ViewportRatio = float2(0.0,0.0);
+	#endif
+>;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define MES40_Technique(Name,Texture,Sphere,Toon) \
+	technique Name \
+		< \
+		string MMDPass = "object_ss"; bool UseTexture = Texture; bool UseSphereMap = Sphere; bool UseToon = Toon; \
+		string Script =  \
+			"RenderColorTarget0=PointLightRender;" \
+			"RenderDepthStencilTarget=DepthRender;" \
+			"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+			"Clear=Color; Clear=Depth;" \
+			"ScriptExternal=Color;" \
+			"Pass=DrawPointLight;" \
+			\
+			"RenderColorTarget0=SpotLightRender;" \
+			"RenderDepthStencilTarget=DepthRender;" \
+			"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+			"Clear=Color; Clear=Depth;" \
+			"ScriptExternal=Color;" \
+			"Pass=DrawSpotLight;" \
+			\
+			"RenderColorTarget0=;" \
+			"RenderDepthStencilTarget=;" \
+			"Pass=DrawObject;" \
+			; \
+		> \
+	{ \
+		pass DrawObject \
+		{ \
+			VertexShader = compile vs_3_0 BufferShadow_VS(Texture, Sphere, Toon); \
+			PixelShader  = compile ps_3_0 BufferShadow_PS(Texture, Sphere, Toon); \
+		} \
+		pass DrawPointLight \
+		{ \
+			VertexShader = compile vs_3_0 PointLight_VS(); \
+			PixelShader  = compile ps_3_0 PointLight_PS(); \
+		} \
+		pass DrawSpotLight \
+		{ \
+			VertexShader = compile vs_3_0 SpotLight_VS(); \
+			PixelShader  = compile ps_3_0 SpotLight_PS(); \
+		} \
+	} \
+	
+MES40_Technique(MainTecBS0, false, false, false)
+MES40_Technique(MainTecBS1, true, false, false)
+MES40_Technique(MainTecBS2, false, true, false)
+MES40_Technique(MainTecBS3, true, true, false)
+MES40_Technique(MainTecBS4, false, false, true)
+MES40_Technique(MainTecBS5, true, false, true)
+MES40_Technique(MainTecBS6, false, true, true)
+MES40_Technique(MainTecBS7, true, true, true)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

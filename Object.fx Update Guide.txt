@@ -1,0 +1,87 @@
+
+Ver 2.4 -> Ver 3.0
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+In:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#define AnimatedTexture "animated.gif" //GIF or APNG (Optional, delete the double slash at the beginning of the line to enable it)
+
+//#define NormalMapTexture  "" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
+
+...
+
+//#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+*Add the following line at the end of that section:
+
+//#define ShadingMapTexture ".png" //Black is always shaded, white is normal
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+In:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//See custom_rim.png for details
+
+float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
+
+	...
+	
+	#define Rim_Use_SpecularMap 1
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+*Add these following lines beneath Rim_Color line:
+
+#define Rim_Directional 1
+	
+		float Rim_Length = 0.5; //SMALLER number means LONGER rim, only works when the rim is directional
+		
+		
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------		
+
+		
+Add this new section:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define LIGHTSOURCES 0 //Turn this off to improve performance if the model doesn't need to be lit by these lights
+
+	#define LightSource_Use_NormalMap 1
+	#define LightSource_Use_SpecularMap 1
+	#define LightSource_Use_Toon_Gradient 0 //Enable this will make Toon_Gradient controls how smooth/sharp the casted lightings are in the same fashion as how Toon_Gradient works with the toon
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Change the old SOFTSHADOW section to this:
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define SOFTSHADOW 1
+//0: MMD's Standard Shadow
+//1: HariganeP's HgShadow (Must load HgShadow.x to enable soft shadow)
+
+	#define Shadow_Sharp 0 //Sharpen the shadow to make it be more fitting to 2D artstyle, only works decently with HgShadow on
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Add:
+
+#define HALFLAMBERT 0
+
+under the TOONSHADING line

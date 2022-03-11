@@ -1,0 +1,281 @@
+
+#if LIGHTSOURCES == 1
+ 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float SpotLight_Intensity = 1;
+float SpotLight_Angle = 50;
+float SpotLight_Range = 50;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 SpotLight1_Pos : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "light"; >;
+float4x4 SpotLight1_Dir : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "light"; >;
+
+float SpotLight1_Intensity_P : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Intensity +"; >;
+float SpotLight1_Intensity_M : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Intensity -"; >;
+static float SpotLight1_Intensity = SpotLight_Intensity + SpotLight1_Intensity_P*SpotLight_Intensity - SpotLight1_Intensity_M*SpotLight_Intensity;
+
+float SpotLight1_Range_P : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Range +"; >;
+float SpotLight1_Range_M : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Range -"; >;
+static float SpotLight1_Range = SpotLight_Range + SpotLight1_Range_P*SpotLight_Range - SpotLight1_Range_M*SpotLight_Range;
+
+float SpotLight1_Angle_P : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Angle +"; >;
+float SpotLight1_Angle_M : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Angle -"; >;
+static float SpotLight1_Angle = SpotLight_Angle - SpotLight1_Angle_P*SpotLight_Angle + SpotLight1_Angle_M*SpotLight_Angle*10 + SpotLight_Angle/10;
+
+float SpotLight1_Red : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Red +"; >;
+float SpotLight1_Green : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Green +"; >;
+float SpotLight1_Blue : CONTROLOBJECT < string name = "MES40 SpotLight1.pmx"; string item = "Blue +"; >;
+static float3 SpotLight1_Color = float3(SpotLight1_Red,SpotLight1_Green,SpotLight1_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 SpotLight2_Pos : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "light"; >;
+float4x4 SpotLight2_Dir : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "light"; >;
+
+float SpotLight2_Intensity_P : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Intensity +"; >;
+float SpotLight2_Intensity_M : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Intensity -"; >;
+static float SpotLight2_Intensity = SpotLight_Intensity + SpotLight2_Intensity_P*SpotLight_Intensity - SpotLight2_Intensity_M*SpotLight_Intensity;
+
+float SpotLight2_Range_P : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Range +"; >;
+float SpotLight2_Range_M : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Range -"; >;
+static float SpotLight2_Range = SpotLight_Range + SpotLight2_Range_P*SpotLight_Range - SpotLight2_Range_M*SpotLight_Range;
+
+float SpotLight2_Angle_P : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Angle +"; >;
+float SpotLight2_Angle_M : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Angle -"; >;
+static float SpotLight2_Angle = SpotLight_Angle - SpotLight2_Angle_P*SpotLight_Angle + SpotLight2_Angle_M*SpotLight_Angle*10 + SpotLight_Angle/10;
+
+float SpotLight2_Red : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Red +"; >;
+float SpotLight2_Green : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Green +"; >;
+float SpotLight2_Blue : CONTROLOBJECT < string name = "MES40 SpotLight2.pmx"; string item = "Blue +"; >;
+static float3 SpotLight2_Color = float3(SpotLight2_Red,SpotLight2_Green,SpotLight2_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 SpotLight3_Pos : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "light"; >;
+float4x4 SpotLight3_Dir : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "light"; >;
+
+float SpotLight3_Intensity_P : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Intensity +"; >;
+float SpotLight3_Intensity_M : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Intensity -"; >;
+static float SpotLight3_Intensity = SpotLight_Intensity + SpotLight3_Intensity_P*SpotLight_Intensity - SpotLight3_Intensity_M*SpotLight_Intensity;
+
+float SpotLight3_Range_P : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Range +"; >;
+float SpotLight3_Range_M : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Range -"; >;
+static float SpotLight3_Range = SpotLight_Range + SpotLight3_Range_P*SpotLight_Range - SpotLight3_Range_M*SpotLight_Range;
+
+float SpotLight3_Angle_P : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Angle +"; >;
+float SpotLight3_Angle_M : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Angle -"; >;
+static float SpotLight3_Angle = SpotLight_Angle - SpotLight3_Angle_P*SpotLight_Angle + SpotLight3_Angle_M*SpotLight_Angle*10 + SpotLight_Angle/10;
+
+float SpotLight3_Red : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Red +"; >;
+float SpotLight3_Green : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Green +"; >;
+float SpotLight3_Blue : CONTROLOBJECT < string name = "MES40 SpotLight3.pmx"; string item = "Blue +"; >;
+static float3 SpotLight3_Color = float3(SpotLight3_Red,SpotLight3_Green,SpotLight3_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 SpotLight4_Pos : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "light"; >;
+float4x4 SpotLight4_Dir : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "light"; >;
+
+float SpotLight4_Intensity_P : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Intensity +"; >;
+float SpotLight4_Intensity_M : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Intensity -"; >;
+static float SpotLight4_Intensity = SpotLight_Intensity + SpotLight4_Intensity_P*SpotLight_Intensity - SpotLight4_Intensity_M*SpotLight_Intensity;
+
+float SpotLight4_Range_P : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Range +"; >;
+float SpotLight4_Range_M : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Range -"; >;
+static float SpotLight4_Range = SpotLight_Range + SpotLight4_Range_P*SpotLight_Range - SpotLight4_Range_M*SpotLight_Range;
+
+float SpotLight4_Angle_P : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Angle +"; >;
+float SpotLight4_Angle_M : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Angle -"; >;
+static float SpotLight4_Angle = SpotLight_Angle - SpotLight4_Angle_P*SpotLight_Angle + SpotLight4_Angle_M*SpotLight_Angle*10 + SpotLight_Angle/10;
+
+float SpotLight4_Red : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Red +"; >;
+float SpotLight4_Green : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Green +"; >;
+float SpotLight4_Blue : CONTROLOBJECT < string name = "MES40 SpotLight4.pmx"; string item = "Blue +"; >;
+static float3 SpotLight4_Color = float3(SpotLight4_Red,SpotLight4_Green,SpotLight4_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 SpotLight5_Pos : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "light"; >;
+float4x4 SpotLight5_Dir : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "light"; >;
+
+float SpotLight5_Intensity_P : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Intensity +"; >;
+float SpotLight5_Intensity_M : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Intensity -"; >;
+static float SpotLight5_Intensity = SpotLight_Intensity + SpotLight5_Intensity_P*SpotLight_Intensity - SpotLight5_Intensity_M*SpotLight_Intensity;
+
+float SpotLight5_Range_P : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Range +"; >;
+float SpotLight5_Range_M : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Range -"; >;
+static float SpotLight5_Range = SpotLight_Range + SpotLight5_Range_P*SpotLight_Range - SpotLight5_Range_M*SpotLight_Range;
+
+float SpotLight5_Angle_P : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Angle +"; >;
+float SpotLight5_Angle_M : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Angle -"; >;
+static float SpotLight5_Angle = SpotLight_Angle - SpotLight5_Angle_P*SpotLight_Angle + SpotLight5_Angle_M*SpotLight_Angle*10 + SpotLight_Angle/10;
+
+float SpotLight5_Red : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Red +"; >;
+float SpotLight5_Green : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Green +"; >;
+float SpotLight5_Blue : CONTROLOBJECT < string name = "MES40 SpotLight5.pmx"; string item = "Blue +"; >;
+static float3 SpotLight5_Color = float3(SpotLight5_Red,SpotLight5_Green,SpotLight5_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct SpotLightVS_OUTPUT 
+{
+    float4 Pos      : POSITION;
+	float2 Tex       : TEXCOORD0;
+	float3 Normal   : TEXCOORD1;
+	float3 Eye      : TEXCOORD2;
+	float3 SpotLightPos1 : TEXCOORD3;
+	float3 SpotLightPos2 : TEXCOORD4;
+	float3 SpotLightPos3 : TEXCOORD5;
+	float3 SpotLightPos4 : TEXCOORD6;
+	float3 SpotLightPos5 : TEXCOORD7;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SpotLightVS_OUTPUT SpotLight_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0) 
+{
+	SpotLightVS_OUTPUT Out = (SpotLightVS_OUTPUT)0;
+	
+	Out.Pos = mul( Pos, WorldViewProjMatrix );
+	Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
+	Out.Tex = Tex;
+	
+	Out.SpotLightPos1 = SpotLight1_Pos - mul( Pos, WorldMatrix );
+	Out.SpotLightPos2 = SpotLight2_Pos - mul( Pos, WorldMatrix );
+	Out.SpotLightPos3 = SpotLight3_Pos - mul( Pos, WorldMatrix );
+	Out.SpotLightPos4 = SpotLight4_Pos - mul( Pos, WorldMatrix );
+	Out.SpotLightPos5 = SpotLight5_Pos - mul( Pos, WorldMatrix );
+	
+	return Out;
+}
+
+float3 SpotLight(float3 SpotLightPos, float4x4 SpotLightDir, float3 Color, float Range, float Angle, float3 Normal)
+{
+	float3 SpotLight_Pos = normalize(SpotLightPos);
+	float3 SpotLight_Pos_ = SpotLightPos;
+	float3 SpotLight_Dir = normalize(SpotLightDir._31_32_33);
+	
+	#if LightSource_Use_Toon_Gradient == 0
+		float Gradient = 1;
+	#else
+		float Gradient = Toon_Gradient;
+	#endif
+	
+	float3 Shade = saturate(dot(SpotLight_Pos,Normal)*Gradient);
+	
+	float Distance = length(SpotLight_Pos_.xyz);
+	float Fade = saturate((1/(Distance+Distance))*Range);
+	
+	float3 SpotLight = pow(saturate(dot(SpotLight_Pos,SpotLight_Dir)),Angle) * Fade * Shade;
+	
+	SpotLight *= Color;
+	
+	return SpotLight;
+}
+
+// ピクセルシェーダ
+float4 SpotLight_PS(SpotLightVS_OUTPUT IN) : COLOR
+{
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	#if LightSource_Use_NormalMap == 1
+	
+		#ifdef NormalMapTexture
+			
+			float4 NormalColor;
+			NormalColor.xyz = tex2D(NormalMapSamp,IN.Tex).rgb*2;
+			NormalColor.a = 1;
+			
+			NormalColor.xyz = lerp(float3(0.5,0.5,1)*2,NormalColor.xyz,NormalMap_Intensity);
+			
+			float3 Normal_Mapped = normalize(IN.Normal);
+			float3 v = normalize(IN.Eye);
+			
+			float3x3 tangentFrame = compute_tangent_frame(Normal_Mapped, v, IN.Tex);
+			Normal_Mapped = (mul(NormalColor - 1.0f, tangentFrame));
+		
+		#else
+			
+			float3 Normal_Mapped = normalize(IN.Normal);
+			
+		#endif
+		
+	#else
+	
+		float3 Normal_Mapped = normalize(IN.Normal);
+		
+	#endif
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	float3 SpotLight1 = SpotLight( IN.SpotLightPos1, SpotLight1_Dir, SpotLight1_Color, SpotLight1_Range, SpotLight1_Angle, Normal_Mapped) *0.5;
+	float3 SpotLight2 = SpotLight( IN.SpotLightPos2, SpotLight2_Dir, SpotLight2_Color, SpotLight2_Range, SpotLight2_Angle, Normal_Mapped) *0.5;
+	float3 SpotLight3 = SpotLight( IN.SpotLightPos3, SpotLight3_Dir, SpotLight3_Color, SpotLight3_Range, SpotLight3_Angle, Normal_Mapped) *0.5;
+	float3 SpotLight4 = SpotLight( IN.SpotLightPos4, SpotLight4_Dir, SpotLight4_Color, SpotLight4_Range, SpotLight4_Angle, Normal_Mapped) *0.5;
+	float3 SpotLight5 = SpotLight( IN.SpotLightPos5, SpotLight5_Dir, SpotLight5_Color, SpotLight5_Range, SpotLight5_Angle, Normal_Mapped) *0.5;
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+		
+	float4 Color = float4(0,0,0,1);
+	
+	Color.rgb = (SpotLight1*SpotLight1_Intensity) + (SpotLight2*SpotLight2_Intensity) + (SpotLight3*SpotLight3_Intensity) + (SpotLight4*SpotLight4_Intensity) + (SpotLight5*SpotLight5_Intensity);
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	#if LightSource_Use_SpecularMap == 1
+		
+		#ifdef SpecularMapTexture
+	
+			float4 SpecularLevel = tex2D(SpecularMapSamp, IN.Tex);
+			float SpecularLevelMono = (SpecularLevel.r+SpecularLevel.g+SpecularLevel.b)/3;
+			SpecularLevel.rgb = lerp(SpecularLevelMono,SpecularLevel.rgb,SpecularMap_Saturation);
+	
+		#else
+	
+			float4 SpecularLevel = float4(1,1,1,1);
+		
+		#endif
+		
+		Color.rgb *= SpecularLevel;
+		
+	#endif
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+    return Color;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#else
+
+	struct SpotLightVS_OUTPUT 
+	{
+		float4 Pos      : POSITION;
+	};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	SpotLightVS_OUTPUT SpotLight_VS(float4 Pos : POSITION) 
+	{
+		SpotLightVS_OUTPUT Out = (SpotLightVS_OUTPUT)0;
+		
+		Out.Pos = mul( Pos, WorldViewProjMatrix );
+		
+		return Out;
+	}
+
+	float4 SpotLight_PS() : COLOR
+	{
+		return float4(0,0,0,1);
+	}
+
+#endif

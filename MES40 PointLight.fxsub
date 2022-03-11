@@ -1,0 +1,253 @@
+
+#if LIGHTSOURCES == 1
+ 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float PointLight_Intensity = 1;
+float PointLight_Range = 10;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 PointLight1_Pos : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "light"; >;
+
+float PointLight1_Intensity_P : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Intensity +"; >;
+float PointLight1_Intensity_M : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Intensity -"; >;
+static float PointLight1_Intensity = PointLight_Intensity + PointLight1_Intensity_P*PointLight_Intensity - PointLight1_Intensity_M*PointLight_Intensity;
+
+float PointLight1_Range_P : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Range +"; >;
+float PointLight1_Range_M : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Range -"; >;
+static float PointLight1_Range = PointLight_Range + PointLight1_Range_P*PointLight_Range - PointLight1_Range_M*PointLight_Range;
+
+float PointLight1_Red : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Red +"; >;
+float PointLight1_Green : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Green +"; >;
+float PointLight1_Blue : CONTROLOBJECT < string name = "MES40 PointLight1.pmx"; string item = "Blue +"; >;
+static float3 PointLight1_Color = float3(PointLight1_Red,PointLight1_Green,PointLight1_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 PointLight2_Pos : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "light"; >;
+
+float PointLight2_Intensity_P : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Intensity +"; >;
+float PointLight2_Intensity_M : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Intensity -"; >;
+static float PointLight2_Intensity = PointLight_Intensity + PointLight2_Intensity_P*PointLight_Intensity - PointLight2_Intensity_M*PointLight_Intensity;
+
+float PointLight2_Range_P : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Range +"; >;
+float PointLight2_Range_M : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Range -"; >;
+static float PointLight2_Range = PointLight_Range + PointLight2_Range_P*PointLight_Range - PointLight2_Range_M*PointLight_Range;
+
+float PointLight2_Red : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Red +"; >;
+float PointLight2_Green : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Green +"; >;
+float PointLight2_Blue : CONTROLOBJECT < string name = "MES40 PointLight2.pmx"; string item = "Blue +"; >;
+static float3 PointLight2_Color = float3(PointLight2_Red,PointLight2_Green,PointLight2_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 PointLight3_Pos : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "light"; >;
+
+float PointLight3_Intensity_P : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Intensity +"; >;
+float PointLight3_Intensity_M : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Intensity -"; >;
+static float PointLight3_Intensity = PointLight_Intensity + PointLight3_Intensity_P*PointLight_Intensity - PointLight3_Intensity_M*PointLight_Intensity;
+
+float PointLight3_Range_P : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Range +"; >;
+float PointLight3_Range_M : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Range -"; >;
+static float PointLight3_Range = PointLight_Range + PointLight3_Range_P*PointLight_Range - PointLight3_Range_M*PointLight_Range;
+
+float PointLight3_Red : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Red +"; >;
+float PointLight3_Green : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Green +"; >;
+float PointLight3_Blue : CONTROLOBJECT < string name = "MES40 PointLight3.pmx"; string item = "Blue +"; >;
+static float3 PointLight3_Color = float3(PointLight3_Red,PointLight3_Green,PointLight3_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 PointLight4_Pos : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "light"; >;
+
+float PointLight4_Intensity_P : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Intensity +"; >;
+float PointLight4_Intensity_M : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Intensity -"; >;
+static float PointLight4_Intensity = PointLight_Intensity + PointLight4_Intensity_P*PointLight_Intensity - PointLight4_Intensity_M*PointLight_Intensity;
+
+float PointLight4_Range_P : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Range +"; >;
+float PointLight4_Range_M : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Range -"; >;
+static float PointLight4_Range = PointLight_Range + PointLight4_Range_P*PointLight_Range - PointLight4_Range_M*PointLight_Range;
+
+float PointLight4_Red : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Red +"; >;
+float PointLight4_Green : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Green +"; >;
+float PointLight4_Blue : CONTROLOBJECT < string name = "MES40 PointLight4.pmx"; string item = "Blue +"; >;
+static float3 PointLight4_Color = float3(PointLight4_Red,PointLight4_Green,PointLight4_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float3 PointLight5_Pos : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "light"; >;
+float PointLight5_Intensity_P : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Intensity +"; >;
+float PointLight5_Intensity_M : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Intensity -"; >;
+static float PointLight5_Intensity = PointLight_Intensity + PointLight5_Intensity_P*PointLight_Intensity - PointLight5_Intensity_M*PointLight_Intensity;
+
+float PointLight5_Range_P : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Range +"; >;
+float PointLight5_Range_M : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Range -"; >;
+static float PointLight5_Range = PointLight_Range + PointLight5_Range_P*PointLight_Range - PointLight5_Range_M*PointLight_Range;
+
+float PointLight5_Red : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Red +"; >;
+float PointLight5_Green : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Green +"; >;
+float PointLight5_Blue : CONTROLOBJECT < string name = "MES40 PointLight5.pmx"; string item = "Blue +"; >;
+static float3 PointLight5_Color = float3(PointLight5_Red,PointLight5_Green,PointLight5_Blue);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct PointLightVS_OUTPUT 
+{
+    float4 Pos      : POSITION;
+	float2 Tex       : TEXCOORD0;
+	float3 Normal   : TEXCOORD1;
+	float3 Eye      : TEXCOORD2;
+	float3 PointLightPos1 : TEXCOORD3;
+	float3 PointLightPos2 : TEXCOORD4;
+	float3 PointLightPos3 : TEXCOORD5;
+	float3 PointLightPos4 : TEXCOORD6;
+	float3 PointLightPos5 : TEXCOORD7;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+PointLightVS_OUTPUT PointLight_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0) 
+{
+	PointLightVS_OUTPUT Out = (PointLightVS_OUTPUT)0;
+	
+	Out.Pos = mul( Pos, WorldViewProjMatrix );
+	Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
+	Out.Tex = Tex;
+	
+	Out.PointLightPos1 = PointLight1_Pos - mul( Pos, WorldMatrix );
+	Out.PointLightPos2 = PointLight2_Pos - mul( Pos, WorldMatrix );
+	Out.PointLightPos3 = PointLight3_Pos - mul( Pos, WorldMatrix );
+	Out.PointLightPos4 = PointLight4_Pos - mul( Pos, WorldMatrix );
+	Out.PointLightPos5 = PointLight5_Pos - mul( Pos, WorldMatrix );
+	
+	return Out;
+}
+
+float3 PointLight(float3 PointLightPos, float3 Color, float Range, float3 Normal)
+{
+	float3 PointLight_Pos = normalize(PointLightPos);
+	float3 PointLight_Pos_ = PointLightPos;
+	
+	#if LightSource_Use_Toon_Gradient == 0
+		float Gradient = 1;
+	#else
+		float Gradient = Toon_Gradient;
+	#endif
+	
+	float3 Shade = saturate(dot(PointLight_Pos,Normal)*Gradient);
+	
+	float Distance = length(PointLight_Pos_.xyz);
+	float Fade = saturate((1/(Distance+Distance))*Range);
+	
+	float3 PointLight = Fade * Shade;
+	
+	PointLight *= Color;
+	
+	return PointLight;
+}
+
+// ピクセルシェーダ
+float4 PointLight_PS(PointLightVS_OUTPUT IN) : COLOR
+{
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	#if LightSource_Use_NormalMap == 1
+	
+		#ifdef NormalMapTexture
+			
+			float4 NormalColor;
+			NormalColor.xyz = tex2D(NormalMapSamp,IN.Tex).rgb*2;
+			NormalColor.a = 1;
+			
+			NormalColor.xyz = lerp(float3(0.5,0.5,1)*2,NormalColor.xyz,NormalMap_Intensity);
+			
+			float3 Normal_Mapped = normalize(IN.Normal);
+			float3 v = normalize(IN.Eye);
+			
+			float3x3 tangentFrame = compute_tangent_frame(Normal_Mapped, v, IN.Tex);
+			Normal_Mapped = (mul(NormalColor - 1.0f, tangentFrame));
+		
+		#else
+			
+			float3 Normal_Mapped = normalize(IN.Normal);
+			
+		#endif
+		
+	#else
+	
+		float3 Normal_Mapped = normalize(IN.Normal);
+		
+	#endif
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	float3 PointLight1 = PointLight( IN.PointLightPos1, PointLight1_Color, PointLight1_Range, Normal_Mapped) *0.5;
+	float3 PointLight2 = PointLight( IN.PointLightPos2, PointLight2_Color, PointLight2_Range, Normal_Mapped) *0.5;
+	float3 PointLight3 = PointLight( IN.PointLightPos3, PointLight3_Color, PointLight3_Range, Normal_Mapped) *0.5;
+	float3 PointLight4 = PointLight( IN.PointLightPos4, PointLight4_Color, PointLight4_Range, Normal_Mapped) *0.5;
+	float3 PointLight5 = PointLight( IN.PointLightPos5, PointLight5_Color, PointLight5_Range, Normal_Mapped) *0.5;
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+		
+	float4 Color = float4(0,0,0,1);
+	
+	Color.rgb = (PointLight1*PointLight1_Intensity) + (PointLight2*PointLight2_Intensity) + (PointLight3*PointLight3_Intensity) + (PointLight4*PointLight4_Intensity) + (PointLight5*PointLight5_Intensity);
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	#if LightSource_Use_SpecularMap == 1
+		
+		#ifdef SpecularMapTexture
+	
+			float4 SpecularLevel = tex2D(SpecularMapSamp, IN.Tex);
+			float SpecularLevelMono = (SpecularLevel.r+SpecularLevel.g+SpecularLevel.b)/3;
+			SpecularLevel.rgb = lerp(SpecularLevelMono,SpecularLevel.rgb,SpecularMap_Saturation);
+	
+		#else
+	
+			float4 SpecularLevel = float4(1,1,1,1);
+		
+		#endif
+		
+		Color.rgb *= SpecularLevel;
+		
+	#endif
+	
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+    return Color;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#else
+
+	struct PointLightVS_OUTPUT 
+	{
+		float4 Pos      : POSITION;
+	};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	PointLightVS_OUTPUT PointLight_VS(float4 Pos : POSITION) 
+	{
+		PointLightVS_OUTPUT Out = (PointLightVS_OUTPUT)0;
+		
+		Out.Pos = mul( Pos, WorldViewProjMatrix );
+		
+		return Out;
+	}
+
+	float4 PointLight_PS() : COLOR
+	{
+		return float4(0,0,0,1);
+	}
+
+#endif

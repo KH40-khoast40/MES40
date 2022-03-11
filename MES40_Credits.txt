@@ -1,0 +1,31 @@
+Original base shader 			: 舞力介入P
+Animated texture support 		: ??? (from MME sample pack)
+Normal map support 			: LessThanEqual (AlternativeFull)
+Specular map support 			: KH40
+Cube map support 			: AMD (from MME sample pack)
+Fake Subsurface Scattering support 	: KH40
+Rim Light support 			: KH40
+Untinted Spa/CubeMap/Specular support 	: KH40
+Parallax support 	                : Rui (Ray-cast)
+Vertex color support 			: KH40
+IBL support                             : KH40
+Sub map support 			: KH40
+Shading map support			: KH40
+Alpha test support 			: KH40
+HgShadow				: 針金P
+Half Lambert support			: (from Half Life-game)
+Custom FOV support                      : banitron
+Light Sources support			: KH40, Ben Cloward
+Mixing shaders 				: KH40
+
+
+
+//Social accounts//
+
+KH40 		: https://twitter.com/khoast40
+舞力介入P	: https://www.nicovideo.jp/user/282266
+LessThanEqual	: https://twitter.com/lessthanequal
+Rui (Ray-cast)  : https://twitter.com/Rui_cg || https://github.com/ray-cast/ray-mmd
+針金P		: https://twitter.com/hariganep
+banitron        : https://www.deviantart.com/banitron
+Ben Cloward	: https://www.youtube.com/c/BenCloward
