@@ -82,7 +82,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Image-based Lighting (IBL) support : [KH40](https://twitter.com/khoast40)
 - Alpha test support : [KH40](https://twitter.com/khoast40)
 - Custom FOV : [banitron](https://www.deviantart.com/banitron)
-- ~~SimpleSoftShadow~~ : [ビームマンP](https://w.atwiki.jp/beamman)
+- ~~SimpleSoftShadow~~ (removed) : [ビームマンP](https://w.atwiki.jp/beamman)
 - ~~ExcellentShadow~~ (removed) : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
 - ~~RotatedPoissonShadow~~ (removed) : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 - HgShadow : [針金P](https://twitter.com/hariganep)
