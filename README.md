@@ -24,6 +24,9 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
 - Image-based Lighting (IBL) **(v2.3)** <img src="https://i.imgur.com/IogxPyJ.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
+- Half Lambert **(v3.0)** <img src="https://i.imgur.com/S102rGN.png" alt="alt text" width="256" height="72">
+- Light Sources **(v3.0)** <img src="https://i.imgur.com/9FbJdKE.png" alt="alt text" width="256" height="72">
+- Shading Map **(v3.0)** <img src="https://i.imgur.com/VzLqvzF.png" alt="alt text" width="128" height="72">
 - Custom FOV
 - Soft Shadow ( 針金P's HgShadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
@@ -83,7 +86,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - ~~ExcellentShadow~~ (removed) : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
 - ~~RotatedPoissonShadow~~ (removed) : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 - HgShadow : [針金P](https://twitter.com/hariganep)
-- Half Lambret support : [(from Half-Life game)](https://developer.valvesoftware.com/wiki/Half_Lambert#:~:text=%22Half%20Lambert%22%20lighting%20is%20a,of%20a%20forgiving%20lighting%20model.)
+- Half Lambert support : [(from Half-Life game)](https://developer.valvesoftware.com/wiki/Half_Lambert#:~:text=%22Half%20Lambert%22%20lighting%20is%20a,of%20a%20forgiving%20lighting%20model.)
 - Light Sources support : [KH40](https://twitter.com/khoast40), [Ben Cloward](https://www.youtube.com/c/BenCloward)
 - Mixing shaders : [KH40](https://twitter.com/khoast40)
   
