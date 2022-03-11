@@ -25,7 +25,7 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Image-based Lighting (IBL) **(v2.3)** <img src="https://i.imgur.com/IogxPyJ.png" alt="alt text" width="256" height="72">
 - Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - Custom FOV
-- Soft Shadow ( ビームマンP's full_SimpleSoftShadow / 針金P's HgShadow )
+- Soft Shadow ( 針金P's HgShadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
 
 ## Usage
@@ -66,22 +66,24 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Original base shader : [舞力介入P](https://www.nicovideo.jp/user/282266)
 - Animated texture support : ??? (from MME sample pack)
 - Normal map support : [LessThanEqual](https://twitter.com/lessthanequal?lang=en) (AlternativeFull)
-- Specular map support : [KH40](https://www.deviantart.com/khoast40)
+- Specular map support : [KH40](https://twitter.com/khoast40)
 - Cube map support : AMD (from MME sample pack)
-- ~~Premade tangents support~~ (removed) : [KH40](https://www.deviantart.com/khoast40), [Minmode](https://www.deviantart.com/minmode)
-- Fake Subsurface Scattering support : [KH40](https://www.deviantart.com/khoast40)
-- Rim Light support : [KH40](https://www.deviantart.com/khoast40)
-- Untinted Spa/CubeMap/Specular support : [KH40](https://www.deviantart.com/khoast40)
+- ~~Premade tangents support~~ (removed) : [KH40](https://twitter.com/khoast40), [Minmode](https://www.deviantart.com/minmode)
+- Fake Subsurface Scattering support : [KH40](https://twitter.com/khoast40)
+- Rim Light support : [KH40](https://twitter.com/khoast40)
+- Untinted Spa/CubeMap/Specular support : [KH40](https://twitter.com/khoast40)
 - Parallax support : [Rui (Ray-cast)](https://twitter.com/Rui_cg)
-- Vertex color support : [KH40](https://www.deviantart.com/khoast40)
-- Sub map support : [KH40](https://www.deviantart.com/khoast40)
-- Image-based Lighting (IBL) support : [KH40](https://www.deviantart.com/khoast40)
-- Alpha test support : [KH40](https://www.deviantart.com/khoast40)
+- Vertex color support : [KH40](https://twitter.com/khoast40)
+- Sub map support : [KH40](https://twitter.com/khoast40)
+- Shading map support : [KH40](https://twitter.com/khoast40)
+- Image-based Lighting (IBL) support : [KH40](https://twitter.com/khoast40)
+- Alpha test support : [KH40](https://twitter.com/khoast40)
 - Custom FOV : [banitron](https://www.deviantart.com/banitron)
-- SimpleSoftShadow : [ビームマンP](https://w.atwiki.jp/beamman)
+- ~~SimpleSoftShadow~~ : [ビームマンP](https://w.atwiki.jp/beamman)
 - ~~ExcellentShadow~~ (removed) : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
 - ~~RotatedPoissonShadow~~ (removed) : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 - HgShadow : [針金P](https://twitter.com/hariganep)
-- Mixing shaders : [KH40](https://www.deviantart.com/khoast40)
-- Special thanks : [FlyingSpirits-P](https://www.deviantart.com/flyingspirits-p), [Minmode](https://www.deviantart.com/minmode)
+- Half Lambret support : [(from Half-Life game)](https://developer.valvesoftware.com/wiki/Half_Lambert#:~:text=%22Half%20Lambert%22%20lighting%20is%20a,of%20a%20forgiving%20lighting%20model.)
+- Light Sources support : [KH40](https://twitter.com/khoast40), [Ben Cloward](https://www.youtube.com/c/BenCloward)
+- Mixing shaders : [KH40](https://twitter.com/khoast40)
   
