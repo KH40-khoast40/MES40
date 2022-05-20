@@ -15,19 +15,19 @@ MMD Extended Shader with things that MMD doesn't support natively, *"a bit" proj
 - Normal Map <img src="https://i.imgur.com/5ia4FJx.png" alt="alt text" width="256" height="72">
 - Specular Map 
 - Cube Map <img src="https://i.imgur.com/imSbAFd.png" alt="alt text" width="256" height="72">
+- Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
+- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
+- Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - ~~Premade Tangents **(v1.1)**~~ (removed) <img src="https://i.imgur.com/bz9MQ1j.png" alt="alt text" width="256" height="72">
 - Fake Subsurface Scattering **(v1.2)** <img src="https://i.imgur.com/85SwTIc.png" alt="alt text" width="256" height="360">
 - Rim Light **(v1.2)**
 - Untinted Spa/CubeMap/Specular **(v1.2.1)** <img src="https://i.imgur.com/TbyDk5X.png" alt="alt text" width="256" height="72">
 - Parallax **(v1.3)** <img src="https://i.imgur.com/wzwMYuQ.png" alt="alt text" width="256" height="72">
-- Vertex Color <img src="https://i.imgur.com/cTQ7Lxb.png" alt="alt text" width="256" height="72">
-- Sub Map ( Shadow or Light Map ) <img src="https://i.imgur.com/5L3jbHb.png" alt="alt text" width="256" height="72">
+- Custom FOV **(v2.2)**
 - Image-based Lighting (IBL) **(v2.3)** <img src="https://i.imgur.com/IogxPyJ.png" alt="alt text" width="256" height="72">
-- Alpha Test <img src="https://i.imgur.com/9hVYS8B.png" alt="alt text" width="256" height="72">
 - Half Lambert **(v3.0)** <img src="https://i.imgur.com/S102rGN.png" alt="alt text" width="256" height="72">
 - Light Sources **(v3.0)** <img src="https://i.imgur.com/9FbJdKE.png" alt="alt text" width="256" height="72">
 - Shading Map **(v3.0)** <img src="https://i.imgur.com/VzLqvzF.png" alt="alt text" width="128" height="72">
-- Custom FOV
 - Soft Shadow ( 針金P's HgShadow )
 - Customizable Toon, Spa, Cube Map, Specular Light values
 
