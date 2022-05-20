@@ -1,87 +1,38 @@
 
-Ver 2.4 -> Ver 3.0
+Ver 3.0 -> Ver 3.1
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-In:
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//#define AnimatedTexture "animated.gif" //GIF or APNG (Optional, delete the double slash at the beginning of the line to enable it)
-
-//#define NormalMapTexture  "" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
-
-...
-
-//#define CubeMapTexture "cubemap.dds" //.dds cube map (Optional, delete the double slash at the beginning of the line to enable it)
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-*Add the following line at the end of that section:
-
-//#define ShadingMapTexture ".png" //Black is always shaded, white is normal
-
-
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-In:
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//See custom_rim.png for details
-
-float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
-
-	...
-	
-	#define Rim_Use_SpecularMap 1
-	
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-*Add these following lines beneath Rim_Color line:
-
-#define Rim_Directional 1
-	
-		float Rim_Length = 0.5; //SMALLER number means LONGER rim, only works when the rim is directional
-		
-		
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------------------------------------------------------		
-
-		
 Add this new section:
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#define LIGHTSOURCES 0 //Turn this off to improve performance if the model doesn't need to be lit by these lights
-
-	#define LightSource_Use_NormalMap 1
-	#define LightSource_Use_SpecularMap 1
-	#define LightSource_Use_Toon_Gradient 0 //Enable this will make Toon_Gradient controls how smooth/sharp the casted lightings are in the same fashion as how Toon_Gradient works with the toon
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+#define BLENDMODE 0 //Blend the model with the background
+//0: Normal
+//1: Multiply
+//2: Linear Dodge (Add)
 
-Change the old SOFTSHADOW section to this:
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#define SOFTSHADOW 1
-//0: MMD's Standard Shadow
-//1: HariganeP's HgShadow (Must load HgShadow.x to enable soft shadow)
-
-	#define Shadow_Sharp 0 //Sharpen the shadow to make it be more fitting to 2D artstyle, only works decently with HgShadow on
+//The texture's background should be white (in case of "Multiply") or black (in case of "Linear Dodge"), not transparent
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+and:
 
-Add:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define HALFLAMBERT 0
+#define PUNI_ENGINE 0 //To use the physic of PuniEngine
 
-under the TOONSHADING line
+//If you use HgShadow with this feature enabled, open "HgShadow_ShadowMap.fxsub" AND "HgShadow_ViewportMap.fxsub", change the "#define PUNI_ENGINE" in there to 1 as well
+
+//After you enable this feature, you still need to apply the 2 fxsub(s) of PuniEngine into its tabs in MME like the usual process. I'm speaking with the assumption that you know how to setup PuniEngine already
+//During the moment AFTER you enable this feature in this shader and BEFORE you apply PuniEngine's fxsub(s), the model's lighting will be weird. It's a normal thing to happen, it also occurs with the original shader of PuniEngine
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Add these lines in the normal map section:
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define NormalMap_Invert_Red 0 //Invert the red channel of the normal map
+#define NormalMap_Invert_Green 0 //Invert the green channel of the normal map
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

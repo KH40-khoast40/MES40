@@ -115,7 +115,7 @@ PointLightVS_OUTPUT PointLight_VS(float4 Pos : POSITION, float3 Normal : NORMAL,
 {
 	PointLightVS_OUTPUT Out = (PointLightVS_OUTPUT)0;
 	
-	Out.Pos = mul( Pos, WorldViewProjMatrix );
+	Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
 	Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
 	Out.Tex = Tex;
 	
@@ -240,7 +240,7 @@ float4 PointLight_PS(PointLightVS_OUTPUT IN) : COLOR
 	{
 		PointLightVS_OUTPUT Out = (PointLightVS_OUTPUT)0;
 		
-		Out.Pos = mul( Pos, WorldViewProjMatrix );
+		Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
 		
 		return Out;
 	}

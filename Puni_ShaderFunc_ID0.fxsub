@@ -1,0 +1,60 @@
+
+float4x4 puni_InvWorldMatrix      	  : WORLDINVERSE;
+
+#define VPBUF_WIDTH 512
+#define VPBUF_HEIGHT 512
+static float2 VPBufSize = float2(VPBUF_WIDTH, VPBUF_HEIGHT);
+static float2 VPBufOffset = float2(0.5 / VPBUF_WIDTH, 0.5 / VPBUF_HEIGHT);
+
+shared texture PuniCalcTex_ID0 : RenderColorTarget;
+sampler CalcSamp = sampler_state
+{
+	Texture = <PuniCalcTex_ID0>;
+    Filter = NONE;
+    AddressU = CLAMP;
+    AddressV = CLAMP;
+};
+shared texture PuniCalcNormalTex_ID0 : RenderColorTarget;
+sampler CalcNormalSamp = sampler_state
+{
+	Texture = <PuniCalcNormalTex_ID0>;
+    Filter = NONE;
+    AddressU = CLAMP;
+    AddressV = CLAMP;
+};
+
+float4 getCalcPos_Puni(int index)
+{
+    float4 Color = 0;
+    float2 tpos = 0;
+	tpos.x = modf((float)index / VPBUF_WIDTH, tpos.y);
+	tpos.y /= VPBUF_HEIGHT;
+	tpos += VPBufOffset;
+	
+	Color = tex2Dlod(CalcSamp, float4(tpos,0,0));
+	
+	return Color;
+}
+float4 getCalcNormal_Puni(int index)
+{
+    float4 Color = 0;
+    float2 tpos = 0;
+	tpos.x = modf((float)index / VPBUF_WIDTH, tpos.y);
+	tpos.y /= VPBUF_HEIGHT;
+	tpos += VPBufOffset;
+	
+	Color = tex2Dlod(CalcNormalSamp, float4(tpos,0,0));
+	
+	return Color;
+}
+
+float4 CalcPuni(int index,float4 Pos)
+{
+	float4 retpos = Pos;
+	retpos.xyz += getCalcPos_Puni(index).xyz;
+	return retpos;
+}
+float4 CalcPuniNormal(int index)
+{
+	return getCalcNormal_Puni(index);
+}

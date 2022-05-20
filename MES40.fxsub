@@ -1,16 +1,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  MMD Extended Shader (MES40) ver 3.0 by KH40 (https://www.deviantart.com/khoast40 || https://twitter.com/khoast40)
+//  MMD Extended Shader (MES40) ver 3.1 by KH40 (https://twitter.com/khoast40 || https://www.deviantart.com/khoast40)
 //
 //  For full credits, go to https://github.com/KH40-khoast40/MES40 or read MES40_Credits.txt
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // パラメータ宣言
 
-//////////////////// HgShadowでこれを追加します ///////////////////////
-// HgShadowの必要なパラメータを取り込む
 #include "HgShadow_ObjHeader.fxh"
-///////////////////////////////////////////////////////////////////////
+
+#include "Puni_ShaderFunc_ID0.fxsub"
 
 // 座法変換行列
 float4x4 WorldViewProjMatrix      : WORLDVIEWPROJECTION;
@@ -622,8 +621,12 @@ struct VS_ZValuePlot_OUTPUT {
 };
 
 // 頂点シェーダ
-VS_ZValuePlot_OUTPUT ZValuePlot_VS( float4 Pos : POSITION )
+VS_ZValuePlot_OUTPUT ZValuePlot_VS( float4 Pos : POSITION, int index : _INDEX )
 {
+	#if PUNI_ENGINE == 1
+		Pos = mul(CalcPuni(index,mul(Pos,WorldMatrix)),puni_InvWorldMatrix);
+	#endif
+	
     VS_ZValuePlot_OUTPUT Out = (VS_ZValuePlot_OUTPUT)0;
 
     // ライトの目線によるワールドビュー射影変換をする
@@ -646,8 +649,8 @@ float4 ZValuePlot_PS( float4 ShadowMapTex : TEXCOORD0 ) : COLOR
 technique ZplotTec < string MMDPass = "zplot"; > {
     pass ZValuePlot {
         AlphaBlendEnable = FALSE;
-        VertexShader = compile vs_2_0 ZValuePlot_VS();
-        PixelShader  = compile ps_2_0 ZValuePlot_PS();
+        VertexShader = compile vs_3_0 ZValuePlot_VS();
+        PixelShader  = compile ps_3_0 ZValuePlot_PS();
     }
 }
 
@@ -672,9 +675,13 @@ struct BufferShadow_OUTPUT {
 };
 
 // 頂点シェーダ
-BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At , uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon)
+BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD0, float2 Tex2 : TEXCOORD1, float4 VColor : Vertex_Color_Stored_At, float2 SubMapUV : Sub_Map_Stored_At , uniform bool useTexture, uniform bool useSphereMap, uniform bool useToon, int index : _INDEX)
 {
     BufferShadow_OUTPUT Out = (BufferShadow_OUTPUT)0;
+	
+	#if PUNI_ENGINE == 1
+		Pos = mul(CalcPuni(index,mul(Pos,WorldMatrix)),puni_InvWorldMatrix);
+	#endif
 
     // カメラ視点のワールドビュー射影変換
     Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
@@ -685,8 +692,14 @@ BufferShadow_OUTPUT BufferShadow_VS(float4 Pos : POSITION, float3 Normal : NORMA
     
     // カメラとの相対位置
     Out.Eye = CameraPosition - mul( Pos, WorldMatrix );
+	
     // 頂点法線
     Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
+	
+	#if PUNI_ENGINE == 1
+		Out.Normal = CalcPuniNormal(index); 
+	#endif
+	
 	// ライト視点によるワールドビュー射影変換
     Out.ZCalcTex = mul( Pos, LightWorldViewProjMatrix );
 	
@@ -782,7 +795,17 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	#ifdef NormalMapTexture
 		
 		float4 NormalColor;
-		NormalColor.xyz = tex2D(NormalMapSamp,Tex).rgb*2;
+		float3 NormalMapTex = tex2D(NormalMapSamp,Tex).rgb;
+		
+		#if NormalMap_Invert_Red == 1
+			NormalMapTex.r = saturate(1-NormalMapTex.r);
+		#endif
+		
+		#if NormalMap_Invert_Green == 1
+			NormalMapTex.g = saturate(1-NormalMapTex.g);
+		#endif
+		
+		NormalColor.xyz = NormalMapTex*2;
 		NormalColor.a = 1;
 		
 		NormalColor.xyz = lerp(float3(0.5,0.5,1)*2,NormalColor.xyz,NormalMap_Intensity);
@@ -1253,7 +1276,7 @@ float4 BufferShadow_PS(BufferShadow_OUTPUT IN, uniform bool useTexture, uniform 
 	{
 		#ifdef NormalMapTexture
 			Color.rgb = lerp( Color.rgb , Normal_Mapped , Normal_view );
-			Color.rgb = lerp( Color.rgb , tex2D(NormalMapSamp,Tex) , NormalMap_view );
+			Color.rgb = lerp( Color.rgb , NormalMapTex , NormalMap_view );
 		#else
 			Color.rgb = lerp( Color.rgb , IN.Normal , Normal_view );
 			Color.rgb = lerp( Color.rgb , 0 , NormalMap_view );
@@ -1327,47 +1350,145 @@ texture DepthRender : RENDERDEPTHSTENCILTARGET
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define MES40_Technique(Name,Texture,Sphere,Toon) \
-	technique Name \
-		< \
-		string MMDPass = "object_ss"; bool UseTexture = Texture; bool UseSphereMap = Sphere; bool UseToon = Toon; \
-		string Script =  \
-			"RenderColorTarget0=PointLightRender;" \
-			"RenderDepthStencilTarget=DepthRender;" \
-			"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
-			"Clear=Color; Clear=Depth;" \
-			"ScriptExternal=Color;" \
-			"Pass=DrawPointLight;" \
-			\
-			"RenderColorTarget0=SpotLightRender;" \
-			"RenderDepthStencilTarget=DepthRender;" \
-			"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
-			"Clear=Color; Clear=Depth;" \
-			"ScriptExternal=Color;" \
-			"Pass=DrawSpotLight;" \
-			\
-			"RenderColorTarget0=;" \
-			"RenderDepthStencilTarget=;" \
-			"Pass=DrawObject;" \
-			; \
-		> \
-	{ \
-		pass DrawObject \
+#if BLENDMODE == 0
+
+	#define MES40_Technique(Name,Texture,Sphere,Toon) \
+		technique Name \
+			< \
+			string MMDPass = "object_ss"; bool UseTexture = Texture; bool UseSphereMap = Sphere; bool UseToon = Toon; \
+			string Script =  \
+				"RenderColorTarget0=PointLightRender;" \
+				"RenderDepthStencilTarget=DepthRender;" \
+				"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+				"Clear=Color; Clear=Depth;" \
+				"ScriptExternal=Color;" \
+				"Pass=DrawPointLight;" \
+				\
+				"RenderColorTarget0=SpotLightRender;" \
+				"RenderDepthStencilTarget=DepthRender;" \
+				"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+				"Clear=Color; Clear=Depth;" \
+				"ScriptExternal=Color;" \
+				"Pass=DrawSpotLight;" \
+				\
+				"RenderColorTarget0=;" \
+				"RenderDepthStencilTarget=;" \
+				"Pass=DrawObject;" \
+				; \
+			> \
 		{ \
-			VertexShader = compile vs_3_0 BufferShadow_VS(Texture, Sphere, Toon); \
-			PixelShader  = compile ps_3_0 BufferShadow_PS(Texture, Sphere, Toon); \
+			pass DrawObject \
+			{ \
+				VertexShader = compile vs_3_0 BufferShadow_VS(Texture, Sphere, Toon); \
+				PixelShader  = compile ps_3_0 BufferShadow_PS(Texture, Sphere, Toon); \
+			} \
+			pass DrawPointLight \
+			{ \
+				VertexShader = compile vs_3_0 PointLight_VS(); \
+				PixelShader  = compile ps_3_0 PointLight_PS(); \
+			} \
+			pass DrawSpotLight \
+			{ \
+				VertexShader = compile vs_3_0 SpotLight_VS(); \
+				PixelShader  = compile ps_3_0 SpotLight_PS(); \
+			} \
 		} \
-		pass DrawPointLight \
+		
+#elif BLENDMODE == 1
+
+	#define MES40_Technique(Name,Texture,Sphere,Toon) \
+		technique Name \
+			< \
+			string MMDPass = "object_ss"; bool UseTexture = Texture; bool UseSphereMap = Sphere; bool UseToon = Toon; \
+			string Script =  \
+				"RenderColorTarget0=PointLightRender;" \
+				"RenderDepthStencilTarget=DepthRender;" \
+				"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+				"Clear=Color; Clear=Depth;" \
+				"ScriptExternal=Color;" \
+				"Pass=DrawPointLight;" \
+				\
+				"RenderColorTarget0=SpotLightRender;" \
+				"RenderDepthStencilTarget=DepthRender;" \
+				"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+				"Clear=Color; Clear=Depth;" \
+				"ScriptExternal=Color;" \
+				"Pass=DrawSpotLight;" \
+				\
+				"RenderColorTarget0=;" \
+				"RenderDepthStencilTarget=;" \
+				"Pass=DrawObject;" \
+				; \
+			> \
 		{ \
-			VertexShader = compile vs_3_0 PointLight_VS(); \
-			PixelShader  = compile ps_3_0 PointLight_PS(); \
+			pass DrawObject \
+			{ \
+				BlendOp = Add; \
+				SrcBlend = DestColor; \
+				DestBlend = Zero; \
+				VertexShader = compile vs_3_0 BufferShadow_VS(Texture, Sphere, Toon); \
+				PixelShader  = compile ps_3_0 BufferShadow_PS(Texture, Sphere, Toon); \
+			} \
+			pass DrawPointLight \
+			{ \
+				VertexShader = compile vs_3_0 PointLight_VS(); \
+				PixelShader  = compile ps_3_0 PointLight_PS(); \
+			} \
+			pass DrawSpotLight \
+			{ \
+				VertexShader = compile vs_3_0 SpotLight_VS(); \
+				PixelShader  = compile ps_3_0 SpotLight_PS(); \
+			} \
 		} \
-		pass DrawSpotLight \
+		
+#else
+
+	#define MES40_Technique(Name,Texture,Sphere,Toon) \
+		technique Name \
+			< \
+			string MMDPass = "object_ss"; bool UseTexture = Texture; bool UseSphereMap = Sphere; bool UseToon = Toon; \
+			string Script =  \
+				"RenderColorTarget0=PointLightRender;" \
+				"RenderDepthStencilTarget=DepthRender;" \
+				"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+				"Clear=Color; Clear=Depth;" \
+				"ScriptExternal=Color;" \
+				"Pass=DrawPointLight;" \
+				\
+				"RenderColorTarget0=SpotLightRender;" \
+				"RenderDepthStencilTarget=DepthRender;" \
+				"ClearSetColor=ClearColor; ClearSetDepth=ClearDepth;" \
+				"Clear=Color; Clear=Depth;" \
+				"ScriptExternal=Color;" \
+				"Pass=DrawSpotLight;" \
+				\
+				"RenderColorTarget0=;" \
+				"RenderDepthStencilTarget=;" \
+				"Pass=DrawObject;" \
+				; \
+			> \
 		{ \
-			VertexShader = compile vs_3_0 SpotLight_VS(); \
-			PixelShader  = compile ps_3_0 SpotLight_PS(); \
+			pass DrawObject \
+			{ \
+				BlendOp = Add; \
+				SrcBlend = One; \
+				DestBlend = One; \
+				VertexShader = compile vs_3_0 BufferShadow_VS(Texture, Sphere, Toon); \
+				PixelShader  = compile ps_3_0 BufferShadow_PS(Texture, Sphere, Toon); \
+			} \
+			pass DrawPointLight \
+			{ \
+				VertexShader = compile vs_3_0 PointLight_VS(); \
+				PixelShader  = compile ps_3_0 PointLight_PS(); \
+			} \
+			pass DrawSpotLight \
+			{ \
+				VertexShader = compile vs_3_0 SpotLight_VS(); \
+				PixelShader  = compile ps_3_0 SpotLight_PS(); \
+			} \
 		} \
-	} \
+
+#endif
 	
 MES40_Technique(MainTecBS0, false, false, false)
 MES40_Technique(MainTecBS1, true, false, false)

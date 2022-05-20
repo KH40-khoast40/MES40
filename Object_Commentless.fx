@@ -1,10 +1,21 @@
 //Customizable settings for MES40
+
+//Custom settings per object (Apply this fx to the object)
 //The #define lines either take 0 (disabled) or 1 (enabled) as the value, or a texture's name
 //The float lines can take any decimal number, but not all of them will produce nice visual
 
+//NOTICE: IF YOU WANT TO USE HGSHADOW, REMEMBER TO USE THE ONE INCLUDED WITH THIS SHADER
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//NOTICE: If you use HgShadow with the shader, go to the "HgShadow_ViewportMap.fxsub" in the "HgShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there the same way as you do here. Finally, apply that fxsub on the model in the "HgS_VMap" tab
+#define BLENDMODE 0 //Blend the model with the background
+//0: Normal
+//1: Multiply
+//2: Linear Dodge (Add)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Open "HgShadow_ViewPortMap.fxsub". These settings will be repeated at the beginning of the file, edit them there the same way as you do here
 
 #define CUSTOM_FOV 0
 
@@ -17,6 +28,9 @@
 //#define AnimatedTexture "animated.gif"
 
 //#define NormalMapTexture  ".png"
+
+	#define NormalMap_Invert_Red 0
+	#define NormalMap_Invert_Green 0
 
 	#define Toon_Use_NormalMap 1
 	#define Spa_CubeMap_Use_NormalMap 1
@@ -78,6 +92,12 @@ float3 Rim_Color = float3(1,1,1);
 	#define LightSource_Use_SpecularMap 1
 	#define LightSource_Use_Toon_Gradient 0
 	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define PUNI_ENGINE 0
+
+//If you use HgShadow with this feature enabled, open "HgShadow_ShadowMap.fxsub" AND "HgShadow_ViewportMap.fxsub", change the "#define PUNI_ENGINE" in there to 1 as well
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define SUBSURFACETOON 0

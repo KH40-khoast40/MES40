@@ -4,13 +4,28 @@
 //The #define lines either take 0 (disabled) or 1 (enabled) as the value, or a texture's name
 //The float lines can take any decimal number, but not all of them will produce nice visual
 
+//NOTICE: IF YOU WANT TO USE HGSHADOW, REMEMBER TO USE THE ONE INCLUDED WITH THIS SHADER (there are some features that require editing the options of HgShadow which are only available in this version)
+//NOTICE: IF YOU WANT TO USE HGSHADOW, REMEMBER TO USE THE ONE INCLUDED WITH THIS SHADER
+//NOTICE: IF YOU WANT TO USE HGSHADOW, REMEMBER TO USE THE ONE INCLUDED WITH THIS SHADER
+//NOTICE: IF YOU WANT TO USE HGSHADOW, REMEMBER TO USE THE ONE INCLUDED WITH THIS SHADER
+//NOTICE: IF YOU WANT TO USE HGSHADOW, REMEMBER TO USE THE ONE INCLUDED WITH THIS SHADER
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//NOTICE: If you use HgShadow with the shader, go to the "HgShadow_ViewportMap.fxsub" in the "HgShadow Custom FOV" folder, these settings will be repeated at the beginning of the file, edit them there the same way as you do here. Finally, apply that fxsub on the model in the "HgS_VMap" tab
+#define BLENDMODE 0 //Blend the model with the background
+//0: Normal
+//1: Multiply
+//2: Linear Dodge (Add)
+
+//The texture's background should be white (in case of "Multiply") or black (in case of "Linear Dodge"), not transparent
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Open "HgShadow_ViewPortMap.fxsub". These settings will be repeated at the beginning of the file, edit them there the same way as you do here. It's required to make the shadow responds to the custom FOV
 
 #define CUSTOM_FOV 0 //Can serve as decimal FOV, and/or to apply the FOV of ripped Diva camera automatically
 
-	#define Custom_Fov_Model "MES40 Controller.pmd"
+	#define Custom_Fov_Model "MES40 Controller.pmx"
 	#define Custom_Fov_Bone "fov"
 	#define Custom_Fov_Axis 1 // 1=x | 2=y | 3=z ; Determine which direction of the bone controls the FOV value
 
@@ -18,7 +33,10 @@
 
 //#define AnimatedTexture "animated.gif" //GIF or APNG (Optional, delete the double slash at the beginning of the line to enable it)
 
-//#define NormalMapTexture  "" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
+//#define NormalMapTexture  ".png" //Normal Map (Optional, delete the double slash at the beginning of the line to enable it)
+		
+	#define NormalMap_Invert_Red 0 //Invert the red channel of the normal map
+	#define NormalMap_Invert_Green 0 //Invert the green channel of the normal map
 
 	#define Toon_Use_NormalMap 1
 	#define Spa_CubeMap_Use_NormalMap 1
@@ -57,7 +75,6 @@ float SpecularLight_Focus = 50;
 
 float Spa_CubeMap_SpecularLight_Tint = 1; //Should be set from 0 to 1. 1 will give the tinted shine as vanilla MMD, 0 will give a dull, untinted shine, values between 0 and 1 are the blends of the two
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //See custom_rim.png for details
@@ -83,6 +100,15 @@ float3 Rim_Color = float3(1,1,1); //RGB value, scale: 0-1
 	#define LightSource_Use_NormalMap 1
 	#define LightSource_Use_SpecularMap 1
 	#define LightSource_Use_Toon_Gradient 0 //Enable this will make Toon_Gradient controls how smooth/sharp the casted lightings are in the same fashion as how Toon_Gradient works with the toon
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define PUNI_ENGINE 0 //To use the physic of PuniEngine
+
+//If you use HgShadow with this feature enabled, open "HgShadow_ShadowMap.fxsub" AND "HgShadow_ViewportMap.fxsub", change the "#define PUNI_ENGINE" in there to 1 as well
+
+//After you enable this feature, you still need to apply the 2 fxsub(s) of PuniEngine into its tabs in MME like the usual process. I'm speaking with the assumption that you know how to setup PuniEngine already
+//During the moment AFTER you enable this feature in this shader and BEFORE you apply PuniEngine's fxsub(s), the model's lighting will be weird. It's a normal thing to happen, it also occurs with the original shader of PuniEngine
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

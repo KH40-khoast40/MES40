@@ -142,7 +142,7 @@ SpotLightVS_OUTPUT SpotLight_VS(float4 Pos : POSITION, float3 Normal : NORMAL, f
 {
 	SpotLightVS_OUTPUT Out = (SpotLightVS_OUTPUT)0;
 	
-	Out.Pos = mul( Pos, WorldViewProjMatrix );
+	Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
 	Out.Normal = normalize( mul( Normal, (float3x3)WorldMatrix ) );
 	Out.Tex = Tex;
 	
@@ -268,7 +268,7 @@ float4 SpotLight_PS(SpotLightVS_OUTPUT IN) : COLOR
 	{
 		SpotLightVS_OUTPUT Out = (SpotLightVS_OUTPUT)0;
 		
-		Out.Pos = mul( Pos, WorldViewProjMatrix );
+		Out.Pos = mul( Pos, WorldViewProjMatrix_Final() );
 		
 		return Out;
 	}
