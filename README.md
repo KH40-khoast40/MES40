@@ -88,7 +88,7 @@ If you want to update your existing Object.fx to the newer version, read *Object
 - Shading map : [KH40](https://twitter.com/khoast40)
 - Blend Mode : https://m.blog.naver.com/frustum/150042116101
 - PuniEngine : [ビームマンP](https://twitter.com/beammanp)
-- ~~SimpleSoftShadow~~ (removed) : [ビームマンP](https://w.atwiki.jp/beamman)
+- ~~SimpleSoftShadow~~ (removed) : [ビームマンP](https://twitter.com/beammanp)
 - ~~ExcellentShadow~~ (removed) : [そぼろ](https://www.nicovideo.jp/mylist/17392230)
 - ~~RotatedPoissonShadow~~ (removed) : https://developer.amd.com/wordpress/media/2012/10/Isidoro-ShadowMapping.pdf
 - HgShadow : [針金P](https://twitter.com/hariganep)
